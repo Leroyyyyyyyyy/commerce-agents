@@ -1,20 +1,16 @@
-# ACME (retail)
+# ACME（零售）
 
-The retail example runs both agents over one catalog with the built-in components only:
-the storefront searches, compares, plans, fills the cart, stages checkout, and keeps
-memory across restarts; the portal shows the morning digest, stages restocks, listing
-fixes, and promotions, and applies them from the preview card. It is also the backend the
-SDK consoles and the reference MCP servers load by default.
+零售示例仅使用内置组件，在同一份商品目录上同时运行两个智能体：商城前台可以搜索和比较商品、制定方案、将商品加入购物车、准备结账，并在重启后保留记忆；商家门户可以展示晨间摘要、准备补货、商品信息修正和促销变更，并通过预览卡片应用这些变更。SDK 控制台和参考 MCP 服务器默认加载的也是这个后端。
 
-## Run
+## 运行
 
 ```bash
-python scripts/run_demo.py retail               # API :8000 + storefront :3000
-python scripts/run_demo.py retail --merchant     # API :8000 + portal :3100
-python scripts/run_demo.py retail --all          # both web apps over one API
+python scripts/run_demo.py retail               # API :8000 + 商城前台 :3000
+python scripts/run_demo.py retail --merchant     # API :8000 + 商家门户 :3100
+python scripts/run_demo.py retail --all          # 两个 Web 应用共用一个 API
 ```
 
-Or start the pieces yourself, after `npm ci` in `examples/`:
+也可以先在 `examples/` 中运行 `npm ci`，然后自行启动各个组件：
 
 ```bash
 uvicorn retail.api.main:app --app-dir examples --reload --port 8000
@@ -22,62 +18,48 @@ uvicorn retail.api.main:app --app-dir examples --reload --port 8000
 (cd examples/retail/merchant-web && npm run dev)       # :3100
 ```
 
-Chat needs `ANTHROPIC_API_KEY` in the repo-root `.env` or the environment; browsing the
-catalog and the portal's widgets do not. `MERCHANT_REQUIRE_HOST_APPROVAL=0` lets a chat
-approval apply a change; by default the preview card's button applies it.
+聊天功能需要在仓库根目录的 `.env` 或环境变量中设置 `ANTHROPIC_API_KEY`；浏览商品目录和商家门户组件不需要该密钥。设置 `MERCHANT_REQUIRE_HOST_APPROVAL=0` 后，可以通过聊天中的批准来应用变更；默认情况下，需要点击预览卡片上的按钮来应用变更。
 
-## Try
+## 试用
 
-Storefront (`scripts/smoke_chat.py --vertical retail` runs the same three turns):
+商城前台（`scripts/smoke_chat.py --vertical retail` 会运行对应的三轮对话）：
 
-1. I'm taking my partner and our 6-year-old camping for the first time next month. We need a tent — nothing too heavy to deal with, ideally under $250.
-2. Compare the top two options for me — mostly care about space and ease of setup.
-3. The family one sounds right. Add it to my cart, and remind me what returns look like just in case.
+1. 下个月我准备第一次带伴侣和 6 岁的孩子去露营。我们需要一顶帐篷——不要太重，最好不超过 250 美元。
+2. 帮我比较最合适的两个选项——我最关心空间大小和搭建是否方便。
+3. 家庭款听起来不错。把它加入购物车，再提醒我一下退货政策，以防万一。
 
-Portal (`scripts/smoke_chat.py --vertical retail --merchant`; the third turn is refused
-until the change is approved on its card, and the last two follow the approval):
+商家门户（运行 `scripts/smoke_chat.py --vertical retail --merchant`；在卡片上批准变更之前，第三轮请求会被拒绝，最后两轮在批准后继续执行）：
 
-1. What needs my attention this morning?
-2. Restock the ocean wall decals with enough to cover the next month at the current pace, and fix that listing's description so it covers what's been missing. Show me both before anything goes live.
-3. Looks right — approve the restock.
-4. Kids-room decor feels like it's having a moment. Pull the numbers — is the under-the-sea line really outperforming the rest of the store this month?
-5. Why did sales move over the last two weeks — which category or listings drove it, and by how much?
+1. 今天早上有哪些事情需要我关注？
+2. 按照当前的销售速度，为海洋主题墙贴补充足够未来一个月销售的库存，并修正该商品描述，补上其中缺失的信息。所有变更上线前都先展示给我看。
+3. 看起来没问题——批准补货。
+4. 儿童房装饰最近似乎很受欢迎。调取数据看看——本月海底世界系列的表现真的超过店内其他商品吗？
+5. 过去两周销售额为什么发生变化——是哪些品类或商品造成的，分别影响了多少？
 
-Single prompts, each in a fresh session:
+以下均为单条提示词，每条都在新的会话中运行：
 
-| Surface | Prompt | A good answer |
+| 界面 | 提示词 | 理想回答 |
 |---|---|---|
-| Storefront | Order me the same resistance band set I bought from you before. | Finds the set in order history, adds one to the cart, and says the price today differs from the price paid then. |
-| Storefront | Can I still return the yoga mat I ordered from you a while back? It's unused. | Reads the order and the returns policy, counts 30 days from the delivery date, and says the window has closed. It does not open a return. |
-| Storefront | I need a universal travel adapter that can charge a laptop. | Runs one search and shows one product card, the 65 W adapter, without a clarifying question. |
-| Storefront | Two couples, first weekend of car camping, and no gear between us. Put together what we need and keep the whole list under $600. | Sizes the plan to four (one family tent, four sleeping bags, one stove, one cooler), totals it, says the sum is over $600, and names what to drop or share to get there. |
-| Portal | Which category drove last week's change in sales, and by how much? | Reads the snapshot and the daily series: kids-room, the only category the data breaks out, gained more than the whole store, so the rest slipped; says the data has no full category split. |
-| Portal | The ocean wall decals listing is missing wall coverage and material. Fill those in for me. | Reads the listing, finds neither value in the record, and asks for them instead of writing a material or a coverage figure into the page. |
+| 商城前台 | 帮我订购一套和之前在你们这里买过的相同的阻力带。 | 从订单历史中找到该套装，将一套加入购物车，并说明当前价格与当时的购买价格不同。 |
+| 商城前台 | 我之前在你们这里订购的瑜伽垫还能退货吗？还没有使用过。 | 读取订单和退货政策，从送达日期起计算 30 天，并说明退货期限已经结束；不会创建退货申请。 |
+| 商城前台 | 我需要一个能给笔记本电脑充电的通用旅行转换插头。 | 只搜索一次并展示一张商品卡片，即 65 W 转换插头，无需提出澄清问题。 |
+| 商城前台 | 两对情侣第一次周末自驾露营，四个人都没有装备。帮我们配齐所需物品，总价控制在 600 美元以内。 | 按四人需求制定方案（一顶家庭帐篷、四个睡袋、一个炉具和一个冷藏箱），计算总价，说明总价超过 600 美元，并指出删掉或共用哪些物品可以将预算降到目标以内。 |
+| 商家门户 | 哪个品类导致了上周销售额的变化，变化了多少？ | 读取快照和每日序列：儿童房品类是数据中唯一单独列出的品类，其增长额超过了全店增长额，因此其他品类整体有所下滑；同时说明数据没有提供完整的品类拆分。 |
+| 商家门户 | 海洋主题墙贴的商品信息缺少墙面覆盖范围和材质。帮我补上。 | 读取商品信息，发现记录中没有这两个值，因此会向用户询问，而不是凭空把材质或覆盖范围写入页面。 |
 
-## What is specific to this example
+## 此示例特有的内容
 
-- `api/mock_retail.py`: `MockRetail`, the `StorefrontBackend` over the fixtures, plus
-  the price and review summaries the product page shows.
-- `api/mock_merchant.py`: `MockRetailMerchant`, the `MerchantBackend` over the same
-  catalog; applied changes write back to it, and `execute_analysis_query` serves the
-  analysis delegate from a read-only SQLite view of the same state.
-- `api/agent_config.py`: the two configs. Analysis is on; `MERCHANT_ANALYSIS_CODE_EXECUTION=1`
-  adds the hosted sandbox and `MERCHANT_ANALYSIS_MODEL` overrides the delegate's model.
-- `api/main.py`: the storefront's file-backed memory store (`data/.memory-store.json`),
-  the product-detail enrichment, and the add-to-cart button route.
-- `api/merchant.py`: the overview's KPI trends and insight cards.
-- `storefront-web/`, `merchant-web/`: this example's cards, views, and tokens, over `../web-shared/`.
+- `api/mock_retail.py`：`MockRetail`，即基于样例数据实现的 `StorefrontBackend`，以及商品详情页展示的价格和评论摘要。
+- `api/mock_merchant.py`：`MockRetailMerchant`，即基于同一商品目录实现的 `MerchantBackend`；已应用的变更会写回其中，`execute_analysis_query` 则通过同一状态的只读 SQLite 视图为分析委托智能体提供数据。
+- `api/agent_config.py`：两个智能体的配置。分析功能默认开启；设置 `MERCHANT_ANALYSIS_CODE_EXECUTION=1` 会添加托管沙箱，`MERCHANT_ANALYSIS_MODEL` 可以覆盖委托智能体使用的模型。
+- `api/main.py`：商城前台基于文件的记忆存储（`data/.memory-store.json`）、商品详情扩充逻辑，以及“加入购物车”按钮的路由。
+- `api/merchant.py`：概览页面中的 KPI 趋势和洞察卡片。
+- `storefront-web/`、`merchant-web/`：此示例的卡片、视图和设计令牌，构建于 `../web-shared/` 之上。
 
-## Data
+## 数据
 
-`data/catalog.json`, `users.json`, `orders.json`, `policies.json`, and `memory-seed.json` feed
-the storefront; `merchant_metrics.json`, `merchant_inventory.json`, `merchant_campaigns.json`,
-and `merchant_messages.json` feed the portal. Four products come with options (a mattress by
-size, a pillowcase set by size and color, a tinted moisturizer by shade, a weighted blanket by
-weight): the catalog authors their variants compactly and `demo_common` derives the rest, as
-[`docs/backends.md`](../../docs/backends.md) describes.
-Product photos in `storefront-web/public/products/` are CC0 category images listed in the
-`IMAGE-CREDITS.md` beside them; products without one render as tiles.
+`data/catalog.json`、`users.json`、`orders.json`、`policies.json` 和 `memory-seed.json` 为商城前台提供数据；`merchant_metrics.json`、`merchant_inventory.json`、`merchant_campaigns.json` 和 `merchant_messages.json` 为商家门户提供数据。有四种商品包含可选规格（床垫可选尺寸，枕套套装可选尺寸和颜色，有色润肤霜可选色号，加重毯可选重量）：商品目录以紧凑形式定义这些变体，其余内容由 `demo_common` 按照 [`docs/backends.md`](../../docs/backends.md) 中的说明派生生成。
 
-Sessions and identity are the shared host code in [`../demo_common/`](../demo_common/): a
-session id stands for a demo profile or the one merchant.
+`storefront-web/public/products/` 中的商品照片是 CC0 品类图片，来源列在同目录的 `IMAGE-CREDITS.md` 中；没有照片的商品会显示为色块。
+
+会话和身份由 [`../demo_common/`](../demo_common/) 中的共享宿主代码处理：一个会话 ID 代表一个演示用户档案或唯一的商家身份。
