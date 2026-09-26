@@ -43,7 +43,7 @@ POST /api/chat
 | orchestrator 循环：prefetch、tool_use 回灌、三个出口 | 93–96 |
 | executor：`seen_products` 白名单、分发表、三层失败、absent 优先 | 97–100 |
 | gates：加购上限按写后总量算 | 101 |
-| prompt caching：三个断点、动态 context 的位置、`tool_choice` 与滚动断点 | 102, 103 |
+| prompt caching：三个断点、动态 context 的位置、`tool_choice` 与滚动断点、真实 trace、中转下的异常 | 102–105 |
 
 ## 最近一次进度（2026-09-26）
 
@@ -61,7 +61,11 @@ tools…⚑① │ system[0] 静态⚑② │ system[1] 动态 context │ messa
 
 动态 context 变化时，①② 仍然命中，③ 失效，整段历史重读一次。时钟截到整点，就是为了减少这种失效。
 
-**还没有验证的**：缓存命中/失效是 API 行为，没有用真实请求的 `usage.cache_read_input_tokens` 验证过。
+同日用真实模型跑了 `smoke_chat.py --vertical retail`（SMOKE PASSED），每一轮的缓存数字见 NOTES 104：
+- turn 2 整段历史都命中（read 12873，write 139）。
+- turn 3 被 `search_policies` 强制调用，round 0 只命中 ①②，3924 tokens 的历史按原价计费。
+
+跑法：在 scratchpad 里包一层脚本，调用 `scripts/smoke_chat.py`，把 SSE 事件存成 JSON。命令前要加 `env -u ANTHROPIC_BASE_URL`，这样才会用 `examples/retail/.env` 里的配置。
 
 ## 未答的预测题（下个 session 冷问，先答再实测）
 
@@ -71,8 +75,8 @@ tools…⚑① │ system[0] 静态⚑② │ system[1] 动态 context │ messa
 
 ## 下一步只做一件事
 
-补上缓存的真实请求实测：同一会话连发两轮，第一轮购物车不变，第二轮改购物车，对比两轮的 `cache_read_input_tokens` / `cache_creation_input_tokens`。
-验收：用户能用这两组数字说明 ①②③ 各自是命中还是失效。
+先弄清楚缓存异常是不是中转造成的（NOTES 105）：用官方 endpoint（或者换一个确定只走单一上游的 key）把同一段 4 个 turn 的对话再跑一遍，看 `read=0` 这类异常还会不会出现。跑法：scratchpad 包装脚本 + `env -u ANTHROPIC_BASE_URL`。每个 turn 的 context 都要记录下来，按字段比对。
+验收：用户能把 turn 3 / turn 4 的失效分别归到「强制轮」「记忆变了」「购物车变了」「基础设施」四类中的哪一类，并说出依据是哪个数字。
 
 ## 环境与陷阱
 
