@@ -65,7 +65,7 @@ tools…⚑① │ system[0] 静态⚑② │ system[1] 动态 context │ messa
 - turn 2 整段历史都命中（read 12873，write 139）。
 - turn 3 被 `search_policies` 强制调用，round 0 只命中 ①②，3924 tokens 的历史按原价计费。
 
-跑法：在 scratchpad 里包一层脚本，调用 `scripts/smoke_chat.py`，把 SSE 事件存成 JSON。命令前要加 `env -u ANTHROPIC_BASE_URL`，这样才会用 `examples/retail/.env` 里的配置。
+trace 和每一轮的缓存数字在 `traces/` 目录，录制脚本是 `traces/record_retail.py`，用法见 `traces/README.md`。
 
 ## 未答的预测题（下个 session 冷问，先答再实测）
 
@@ -75,7 +75,7 @@ tools…⚑① │ system[0] 静态⚑② │ system[1] 动态 context │ messa
 
 ## 下一步只做一件事
 
-先弄清楚缓存异常是不是中转造成的（NOTES 105）：用官方 endpoint（或者换一个确定只走单一上游的 key）把同一段 4 个 turn 的对话再跑一遍，看 `read=0` 这类异常还会不会出现。跑法：scratchpad 包装脚本 + `env -u ANTHROPIC_BASE_URL`。每个 turn 的 context 都要记录下来，按字段比对。
+先弄清楚缓存异常是不是中转造成的（NOTES 105）：用官方 endpoint（或者换一个确定只走单一上游的 key）把同一段 4 个 turn 的对话再跑一遍，看 `read=0` 这类异常还会不会出现。跑法：`traces/record_retail.py ... --fourth-turn`，它会把每个 turn 的 context 一起录下来，拿来按字段比对。
 验收：用户能把 turn 3 / turn 4 的失效分别归到「强制轮」「记忆变了」「购物车变了」「基础设施」四类中的哪一类，并说出依据是哪个数字。
 
 ## 环境与陷阱

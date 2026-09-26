@@ -1,0 +1,1131 @@
+[
+ {
+  "message": "I'm taking my partner and our 6-year-old camping for the first time next month. We need a tent — nothing too heavy to deal with, ideally under $250.",
+  "events": [
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "load_skill",
+     "id": "toolu_001",
+     "input": {
+      "skill_name": "search-discovery"
+     },
+     "label": "Finding tent options for your trip"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "load_skill",
+     "id": "toolu_001",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "# Search and discovery\n\nBelow, \"item\" means whatever this catalog sells: a product, a stay, a plan, or a seat.\n\nTurn the need the customer described into a few options and a recommendation, in as few turns as the request allows.\n\n## Read the request and phrase the search\n\n- Take the budget, the recipient, dates, sizes, intended use, and dealbreakers out of the message and apply them; let the results show that you did instead of reading them back.\n- Search by default; a budget, a size, or a recipient you were not given narrows the shortlist and is asked about beside the results. Ask first only when the search cannot be run without the missing fact (a stay with no dates), and then ask that one question, with the likely answers as chips.\n- Apply what the profile you were given already holds (household, saved limits, what they own) without asking about it again.\n- Word the query in the catalog's vocabulary and leave the customer's phrasing behind.\n- Run one search per distinct thing the request names, all in the same round. Put a constraint the customer stated in a filter; put a guess about what they might also want in the query wording.\n\n## Shortlist and recommendation\n\n- Show three t"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_002",
+     "input": {
+      "query": "family camping tent easy setup",
+      "filters": {
+       "category": "tents",
+       "max_price": 250,
+       "sort": "relevance"
+      }
+     },
+     "label": "Searching for family tents under $250"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_002",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 2 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"family camping tent easy setup\", \"result_count\": 2, \"results\": [{\"product_id\": \"AR-1202\", \"title\": \"ACME Basecamp 4-Person Family Tent\", \"brand\": \"ACME Basecamp\", \"price\": 219.0, \"currency\": \"USD\", \"rating\": 4.5, \"review_count\": 1430, \"in_stock\": true, \"attributes\": {\"capacity\": \"4 person\", \"weight\": \"7.4 kg\", \"standing_height\": \"183 cm\", \"setup\": \"8 minutes\", \"delivery\": \"Get it by Wed, Sep 30\"}, \"short_description\": \"Standing-height family tent with a room divider and a porch awning for muddy boots.\"}, {\"product_id\": \"AR-1201\", \"title\": \"ACME Basecamp 2-Person Backpacking Tent\", \"brand\": \"ACME Basecamp\", \"price\": 149.0, \"currency\": \"USD\", \"rating\": 4.6, \"review_count\": 812, \"in_stock\": true, \"labels\": [\"bestseller\"], \"attributes\": {\"capacity\": \"2 person\", \"weight\": \"2.1 kg\", \"season\": \"3-season\", \"setup\": \"freestanding\", \"delivery\": \"Get it by Tue, S"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_003",
+     "input": {
+      "query": "tent",
+      "filters": {
+       "max_price": 250
+      }
+     },
+     "label": "Checking other tent options"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_003",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 2 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"tent\", \"result_count\": 2, \"results\": [{\"product_id\": \"AR-1201\", \"title\": \"ACME Basecamp 2-Person Backpacking Tent\", \"brand\": \"ACME Basecamp\", \"price\": 149.0, \"currency\": \"USD\", \"rating\": 4.6, \"review_count\": 812, \"in_stock\": true, \"labels\": [\"bestseller\"], \"attributes\": {\"capacity\": \"2 person\", \"weight\": \"2.1 kg\", \"season\": \"3-season\", \"setup\": \"freestanding\", \"delivery\": \"Get it by Tue, Sep 29\"}, \"short_description\": \"A 2.1 kg freestanding three-season tent that pitches in about four minutes.\"}, {\"product_id\": \"AR-1202\", \"title\": \"ACME Basecamp 4-Person Family Tent\", \"brand\": \"ACME Basecamp\", \"price\": 219.0, \"currency\": \"USD\", \"rating\": 4.5, \"review_count\": 1430, \"in_stock\": true, \"attributes\": {\"capacity\": \"4 person\", \"weight\": \"7.4 kg\", \"standing_height\": \"183 cm\", \"setup\": \"8 minutes\", \"delivery\": \"Get it by Wed, Sep 30\"}, \"short_description\": \"Sta"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "The"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " catalog only carries two tents that fit your budget. For a family of three plus gear, the ACME Basecamp 4-Person Family T"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ent is the better fit — it has standing height and room to spread out (space matters more for first-timers), sets up in about 8 minutes, and com"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "es in under your $250 cap. The 2-person backpacking tent is lighter and quicker to pitch but really only suits two ad"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ults, not a family of three."
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "products",
+     "payload": {
+      "items": [
+       {
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "standing-height 4-person space for your family, under $250"
+       },
+       {
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ]
+     },
+     "stream_id": "toolu_004"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "products",
+     "payload": {
+      "items": [
+       {
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "standing-height 4-person space for your family, under $250"
+       },
+       {
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "lighter and quicker to pitch, but only sized for two"
+       }
+      ],
+      "title": "Tents for your camping trip"
+     },
+     "stream_id": "toolu_004"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_products",
+     "id": "toolu_004",
+     "input": {
+      "picks": [
+       {
+        "product_id": "AR-1202",
+        "reason": "standing-height 4-person space for your family, under $250"
+       },
+       {
+        "product_id": "AR-1201",
+        "reason": "lighter and quicker to pitch, but only sized for two"
+       }
+      ],
+      "title": "Tents for your camping trip"
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "products",
+     "payload": {
+      "title": "Tents for your camping trip",
+      "layout": "carousel",
+      "items": [
+       {
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "standing-height 4-person space for your family, under $250"
+       },
+       {
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "lighter and quicker to pitch, but only sized for two"
+       }
+      ]
+     },
+     "stream_id": "toolu_004"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_products",
+     "id": "toolu_004",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_005",
+     "input": {
+      "suggestions": [
+       "Add the 4-person tent to cart",
+       "Compare the two tents",
+       "See sleeping bags for the trip"
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "suggestions",
+     "payload": {
+      "suggestions": [
+       "Add the 4-person tent to cart",
+       "Compare the two tents",
+       "See sleeping bags for the trip"
+      ]
+     },
+     "stream_id": "toolu_005"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_005",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "turn_complete",
+    "data": {
+     "stop_reason": "end_turn",
+     "usage": {
+      "input_tokens": 620,
+      "output_tokens": 1013,
+      "cache_read_input_tokens": 45344,
+      "cache_creation_input_tokens": 12873
+     },
+     "elapsed_ms": 27979,
+     "results_cleared": 0
+    }
+   }
+  ]
+ },
+ {
+  "message": "Compare the top two options for me — mostly care about space and ease of setup.",
+  "events": [
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [],
+      "dimensions": [
+       "space"
+      ],
+      "title": "Space and setup: Basecamp tents"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [],
+      "dimensions": [
+       "space",
+       "setup ease"
+      ],
+      "title": "Space and setup: Basecamp tents"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [],
+        "cons": [],
+        "best_for": null,
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ],
+      "dimensions": [
+       "space",
+       "setup ease"
+      ],
+      "title": "Space and setup: Basecamp tents"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [
+         "4-person capacity with 183 cm standing height",
+         "room divider and porch awning for gear",
+         "sets up in about 8 minutes"
+        ],
+        "cons": [
+         "heavier at 7.4 kg"
+        ],
+        "best_for": "a family of three needing room to move and store gear",
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        }
+       },
+       {
+        "product_id": "AR-1201",
+        "pros": [],
+        "cons": [],
+        "best_for": null,
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ],
+      "dimensions": [
+       "space",
+       "setup ease"
+      ],
+      "title": "Space and setup: Basecamp tents"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_comparison",
+     "id": "toolu_006",
+     "input": {
+      "title": "Space and setup: Basecamp tents",
+      "dimensions": [
+       "space",
+       "setup ease"
+      ],
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [
+         "4-person capacity with 183 cm standing height",
+         "room divider and porch awning for gear",
+         "sets up in about 8 minutes"
+        ],
+        "cons": [
+         "heavier at 7.4 kg"
+        ],
+        "best_for": "a family of three needing room to move and store gear"
+       },
+       {
+        "product_id": "AR-1201",
+        "pros": [
+         "very light at 2.1 kg",
+         "pitches in about 4 minutes"
+        ],
+        "cons": [
+         "only 2-person capacity, tight for a family of three"
+        ],
+        "best_for": "two adults prioritizing minimal weight"
+       }
+      ],
+      "recommended_product_id": "AR-1202"
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "title": "Space and setup: Basecamp tents",
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [
+         "4-person capacity with 183 cm standing height",
+         "room divider and porch awning for gear",
+         "sets up in about 8 minutes"
+        ],
+        "cons": [
+         "heavier at 7.4 kg"
+        ],
+        "best_for": "a family of three needing room to move and store gear",
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        }
+       },
+       {
+        "product_id": "AR-1201",
+        "pros": [
+         "very light at 2.1 kg",
+         "pitches in about 4 minutes"
+        ],
+        "cons": [
+         "only 2-person capacity, tight for a family of three"
+        ],
+        "best_for": "two adults prioritizing minimal weight",
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ],
+      "dimensions": [
+       "space",
+       "setup ease"
+      ],
+      "recommended_product_id": "AR-1202",
+      "price_delta": {
+       "amount": 70.0,
+       "low_product_id": "AR-1201",
+       "low_price": 149.0,
+       "high_product_id": "AR-1202",
+       "high_price": 219.0
+      }
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_comparison",
+     "id": "toolu_006",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "Since"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " space is your priority, the"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " Basecamp 4-"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "Person"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " Family Tent is the cl"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ear p"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ick:"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " standing height and a"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " room divider for you"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": ","
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " your part"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ner, and your"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " child,"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " with set"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "up only"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " taking a"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " few"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " min"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "utes longer than the sm"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "aller t"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ent."
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_007",
+     "input": {
+      "suggestions": [
+       "Add the 4-person tent to cart",
+       "See sleeping bags for the trip"
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "suggestions",
+     "payload": {
+      "suggestions": [
+       "Add the 4-person tent to cart",
+       "See sleeping bags for the trip"
+      ]
+     },
+     "stream_id": "toolu_007"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_007",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "turn_complete",
+    "data": {
+     "stop_reason": "end_turn",
+     "usage": {
+      "input_tokens": 4,
+      "output_tokens": 522,
+      "cache_read_input_tokens": 25885,
+      "cache_creation_input_tokens": 501
+     },
+     "elapsed_ms": 12996,
+     "results_cleared": 0
+    }
+   }
+  ]
+ },
+ {
+  "message": "The family one sounds right. Add it to my cart, and remind me what returns look like just in case.",
+  "events": [
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "add_to_cart",
+     "id": "toolu_008",
+     "input": {
+      "product_id": "AR-1202"
+     },
+     "label": "Adding the family tent to your cart"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_policies",
+     "id": "toolu_009",
+     "input": {
+      "query": "returns policy tents outdoor gear"
+     },
+     "label": "Checking return policy"
+    }
+   },
+   {
+    "type": "cart_update",
+    "data": {
+     "cart": {
+      "items": [
+       {
+        "product_id": "AR-1202",
+        "title": "ACME Basecamp 4-Person Family Tent",
+        "price": 219.0,
+        "quantity": 1,
+        "image_url": null,
+        "line_total": 219.0
+       }
+      ],
+      "item_count": 1,
+      "subtotal": 219.0,
+      "currency": "USD"
+     }
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "add_to_cart",
+     "id": "toolu_008",
+     "summary": "Added AR-1202 x1. Cart now has 1 item(s), subtotal 219.00 USD.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_policies",
+     "id": "toolu_009",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "<storefront_data>\n[{\"policy_id\": \"guide-tents\", \"title\": \"Buying guide: choosing a tent\", \"category\": \"guide\", \"content\": \"A tent's person rating counts sleepers packed shoulder to shoulder, so for comfort size up by one from your head count, and by two if gear or a dog sleeps inside. Decide next how the tent travels: carried in on foot, every gram matters and a low, compact backpacking tent wins; driven to the site, weight barely matters and standing height and floor space matter far more. A 3-season rating covers spring through autumn camping; only winter trips need more. Freestanding tents pitch anywhere and move easily once up; a first tent should pitch in ten minutes or less, and it is worth practising once at home.\"}, {\"policy_id\": \"returns\", \"title\": \"Returns & refunds\", \"category\": \"returns\", \"content\": \"Most items can be returned within 30 days of delivery in original condition for a full refund to the original payment method. Opened electronics can be returned within 15 days. Mattresses, bedding, and personal-care items must be unopened. Refunds post within 5 business days of the return arriving at our warehouse. ACME Subscription members get free return pickup; otherwise"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "Added"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " the "
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "AC"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ME Bas"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ecamp "
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "4-Person"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " Family"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " Tent —"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " your"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " cart sub"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "total is now $219."
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "00.\n\nOn returns: you"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " have"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " 30 days from"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " delivery to"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " return it"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " in original condition for a full ref"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "und, and as an"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " ACME Subscription member"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " you get"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " free return pickup,"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " with refunds posting within "
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "5 business days once"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " it re"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "aches the warehouse."
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_010",
+     "input": {
+      "suggestions": [
+       "See sleeping bags for the trip",
+       "Check out now",
+       "See camping chairs"
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "suggestions",
+     "payload": {
+      "suggestions": [
+       "See sleeping bags for the trip",
+       "Check out now",
+       "See camping chairs"
+      ]
+     },
+     "stream_id": "toolu_010"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_010",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "turn_complete",
+    "data": {
+     "stop_reason": "end_turn",
+     "usage": {
+      "input_tokens": 3926,
+      "output_tokens": 406,
+      "cache_read_input_tokens": 23034,
+      "cache_creation_input_tokens": 1066
+     },
+     "elapsed_ms": 10681,
+     "results_cleared": 0
+    }
+   }
+  ]
+ }
+]

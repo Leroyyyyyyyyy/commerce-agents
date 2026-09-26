@@ -1,0 +1,2376 @@
+[
+ {
+  "message": "I'm taking my partner and our 6-year-old camping for the first time next month. We need a tent — nothing too heavy to deal with, ideally under $250.",
+  "context": "# Session context\n\n<storefront_data>\n{\"customer\": {\"name\": \"Priya\", \"loyalty_tier\": \"ACME Subscription member\", \"location\": \"Maple Heights\", \"preferences\": {\"spending\": \"usually keeps to the mid-range options\", \"home\": \"two-bedroom apartment, no outdoor storage\", \"household\": \"partner and a 6-year-old\", \"pet\": \"golden retriever named Biscuit\", \"style\": \"minimal, neutral colors\"}}, \"saved_memory\": [{\"key\": \"bedding_constraint\", \"value\": \"partner sleeps hot — skip heavy comforters and wool bedding\", \"category\": \"constraint\"}, {\"key\": \"current_project\", \"value\": \"Camping next month with partner and 6-year-old child, tent budget under $250\", \"category\": \"context\", \"source_session\": \"session-A\"}, {\"key\": \"camping_space_priority\", \"value\": \"prioritizes space size in camping gear\", \"category\": \"preference\", \"source_session\": \"session-A\"}, {\"key\": \"workspace\", \"value\": \"works from home three days a week at a desk set up in the bedroom\", \"category\": \"context\"}, {\"key\": \"camping_experience\", \"value\": \"first-time camper — prefers gear that is simple to set up and forgiving to use\", \"category\": \"context\"}], \"cart\": {\"item_count\": 0, \"subtotal\": 0, \"items\": []}, \"current_page\": {\"page_type\": \"home\", \"extra\": {}}, \"local_time\": \"2026-09-26T20:00\"}\n</storefront_data>",
+  "events": [
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "load_skill",
+     "id": "toolu_001",
+     "input": {
+      "skill_name": "search-discovery"
+     },
+     "label": "Finding tent options for your trip"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "load_skill",
+     "id": "toolu_001",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "# Search and discovery\n\nBelow, \"item\" means whatever this catalog sells: a product, a stay, a plan, or a seat.\n\nTurn the need the customer described into a few options and a recommendation, in as few turns as the request allows.\n\n## Read the request and phrase the search\n\n- Take the budget, the recipient, dates, sizes, intended use, and dealbreakers out of the message and apply them; let the results show that you did instead of reading them back.\n- Search by default; a budget, a size, or a recipient you were not given narrows the shortlist and is asked about beside the results. Ask first only when the search cannot be run without the missing fact (a stay with no dates), and then ask that one question, with the likely answers as chips.\n- Apply what the profile you were given already holds (household, saved limits, what they own) without asking about it again.\n- Word the query in the catalog's vocabulary and leave the customer's phrasing behind.\n- Run one search per distinct thing the request names, all in the same round. Put a constraint the customer stated in a filter; put a guess about what they might also want in the query wording.\n\n## Shortlist and recommendation\n\n- Show three t"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_002",
+     "input": {
+      "query": "family camping tent 3-4 person easy setup",
+      "filters": {
+       "category": "camping tents",
+       "max_price": 250,
+       "sort": "relevance"
+      }
+     },
+     "label": "Searching for family-friendly tents"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_002",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 2 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"family camping tent 3-4 person easy setup\", \"result_count\": 2, \"results\": [{\"product_id\": \"AR-1202\", \"title\": \"ACME Basecamp 4-Person Family Tent\", \"brand\": \"ACME Basecamp\", \"price\": 219.0, \"currency\": \"USD\", \"rating\": 4.5, \"review_count\": 1430, \"in_stock\": true, \"attributes\": {\"capacity\": \"4 person\", \"weight\": \"7.4 kg\", \"standing_height\": \"183 cm\", \"setup\": \"8 minutes\", \"delivery\": \"Get it by Wed, Sep 30\"}, \"short_description\": \"Standing-height family tent with a room divider and a porch awning for muddy boots.\"}, {\"product_id\": \"AR-1201\", \"title\": \"ACME Basecamp 2-Person Backpacking Tent\", \"brand\": \"ACME Basecamp\", \"price\": 149.0, \"currency\": \"USD\", \"rating\": 4.6, \"review_count\": 812, \"in_stock\": true, \"labels\": [\"bestseller\"], \"attributes\": {\"capacity\": \"2 person\", \"weight\": \"2.1 kg\", \"season\": \"3-season\", \"setup\": \"freestanding\", \"delivery\": \"Get i"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_003",
+     "input": {
+      "query": "camping tent",
+      "filters": {
+       "max_price": 250,
+       "sort": "relevance"
+      }
+     },
+     "label": "Checking for more tent options"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_003",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 4 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"camping tent\", \"result_count\": 4, \"results\": [{\"product_id\": \"AR-1201\", \"title\": \"ACME Basecamp 2-Person Backpacking Tent\", \"brand\": \"ACME Basecamp\", \"price\": 149.0, \"currency\": \"USD\", \"rating\": 4.6, \"review_count\": 812, \"in_stock\": true, \"labels\": [\"bestseller\"], \"attributes\": {\"capacity\": \"2 person\", \"weight\": \"2.1 kg\", \"season\": \"3-season\", \"setup\": \"freestanding\", \"delivery\": \"Get it by Tue, Sep 29\"}, \"short_description\": \"A 2.1 kg freestanding three-season tent that pitches in about four minutes.\"}, {\"product_id\": \"AR-1202\", \"title\": \"ACME Basecamp 4-Person Family Tent\", \"brand\": \"ACME Basecamp\", \"price\": 219.0, \"currency\": \"USD\", \"rating\": 4.5, \"review_count\": 1430, \"in_stock\": true, \"attributes\": {\"capacity\": \"4 person\", \"weight\": \"7.4 kg\", \"standing_height\": \"183 cm\", \"setup\": \"8 minutes\", \"delivery\": \"Get it by Wed, Sep 30\"}, \"short_descriptio"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "The"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " cat"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "alog only"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " has two tents"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " in"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " stock; for"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " a"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " family of three the"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " "
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "4-Person Bas"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ecamp f"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "its best given your"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " pri"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ority on space and eas"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "y setup."
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "products",
+     "payload": {
+      "items": [
+       {
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ]
+     },
+     "stream_id": "toolu_004"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "products",
+     "payload": {
+      "items": [
+       {
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "standing-height 4-person space with an 8-minute setup, fits your under-$250 budget"
+       },
+       {
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ]
+     },
+     "stream_id": "toolu_004"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "products",
+     "payload": {
+      "items": [
+       {
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "standing-height 4-person space with an 8-minute setup, fits your under-$250 budget"
+       },
+       {
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "lighter and cheaper but only 2-person, tighter fit for three plus gear"
+       }
+      ],
+      "title": "Tents for your first family camping trip"
+     },
+     "stream_id": "toolu_004"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_products",
+     "id": "toolu_004",
+     "input": {
+      "picks": [
+       {
+        "product_id": "AR-1202",
+        "reason": "standing-height 4-person space with an 8-minute setup, fits your under-$250 budget"
+       },
+       {
+        "product_id": "AR-1201",
+        "reason": "lighter and cheaper but only 2-person, tighter fit for three plus gear"
+       }
+      ],
+      "title": "Tents for your first family camping trip"
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "products",
+     "payload": {
+      "title": "Tents for your first family camping trip",
+      "layout": "carousel",
+      "items": [
+       {
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "standing-height 4-person space with an 8-minute setup, fits your under-$250 budget"
+       },
+       {
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        },
+        "reason": "lighter and cheaper but only 2-person, tighter fit for three plus gear"
+       }
+      ]
+     },
+     "stream_id": "toolu_004"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_products",
+     "id": "toolu_004",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_005",
+     "input": {
+      "suggestions": [
+       "Add the 4-person tent to my cart",
+       "What's the setup like for a first-timer?",
+       "Compare both tents",
+       "Show sleeping bags for three"
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "suggestions",
+     "payload": {
+      "suggestions": [
+       "Add the 4-person tent to my cart",
+       "What's the setup like for a first-timer?",
+       "Compare both tents",
+       "Show sleeping bags for three"
+      ]
+     },
+     "stream_id": "toolu_005"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_005",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "turn_complete",
+    "data": {
+     "stop_reason": "end_turn",
+     "usage": {
+      "input_tokens": 620,
+      "output_tokens": 826,
+      "cache_read_input_tokens": 32801,
+      "cache_creation_input_tokens": 26112
+     },
+     "elapsed_ms": 29950,
+     "results_cleared": 0
+    }
+   }
+  ]
+ },
+ {
+  "message": "Compare the top two options for me — mostly care about space and ease of setup.",
+  "context": "# Session context\n\n<storefront_data>\n{\"customer\": {\"name\": \"Priya\", \"loyalty_tier\": \"ACME Subscription member\", \"location\": \"Maple Heights\", \"preferences\": {\"spending\": \"usually keeps to the mid-range options\", \"home\": \"two-bedroom apartment, no outdoor storage\", \"household\": \"partner and a 6-year-old\", \"pet\": \"golden retriever named Biscuit\", \"style\": \"minimal, neutral colors\"}}, \"saved_memory\": [{\"key\": \"bedding_constraint\", \"value\": \"partner sleeps hot — skip heavy comforters and wool bedding\", \"category\": \"constraint\"}, {\"key\": \"current_project\", \"value\": \"Camping next month with partner and 6-year-old child, tent budget under $250\", \"category\": \"context\", \"source_session\": \"session-A\"}, {\"key\": \"camping_space_priority\", \"value\": \"prioritizes space size in camping gear\", \"category\": \"preference\", \"source_session\": \"session-A\"}, {\"key\": \"workspace\", \"value\": \"works from home three days a week at a desk set up in the bedroom\", \"category\": \"context\"}, {\"key\": \"camping_experience\", \"value\": \"first-time camper — prefers gear that is simple to set up and forgiving to use\", \"category\": \"context\"}], \"cart\": {\"item_count\": 0, \"subtotal\": 0, \"items\": []}, \"current_page\": {\"page_type\": \"home\", \"extra\": {}}, \"local_time\": \"2026-09-26T20:00\"}\n</storefront_data>",
+  "events": [
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "The"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " Basecamp "
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "4-Person is"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " the"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " clear f"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "it for space"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " and sim"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "plicity, while the "
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "2-Person tr"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ades room"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " for a lighter p"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ack."
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [],
+      "dimensions": [],
+      "title": "4-Person vs 2-Person Basecamp Tent"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [],
+      "dimensions": [
+       "space"
+      ],
+      "title": "4-Person vs 2-Person Basecamp Tent"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [],
+      "dimensions": [
+       "space",
+       "ease of setup"
+      ],
+      "title": "4-Person vs 2-Person Basecamp Tent"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [],
+      "dimensions": [
+       "space",
+       "ease of setup",
+       "weight"
+      ],
+      "title": "4-Person vs 2-Person Basecamp Tent"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [],
+        "cons": [],
+        "best_for": null,
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ],
+      "dimensions": [
+       "space",
+       "ease of setup",
+       "weight"
+      ],
+      "title": "4-Person vs 2-Person Basecamp Tent"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [
+         "4-person capacity with 183 cm standing height",
+         "room divider for privacy",
+         "porch awning for muddy boots",
+         "8-minute setup"
+        ],
+        "cons": [
+         "heavier at 7.4 kg"
+        ],
+        "best_for": "a family of three with gear, wanting room to stand and move",
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        }
+       },
+       {
+        "product_id": "AR-1201",
+        "pros": [],
+        "cons": [],
+        "best_for": null,
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ],
+      "dimensions": [
+       "space",
+       "ease of setup",
+       "weight"
+      ],
+      "title": "4-Person vs 2-Person Basecamp Tent"
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_comparison",
+     "id": "toolu_006",
+     "input": {
+      "title": "4-Person vs 2-Person Basecamp Tent",
+      "dimensions": [
+       "space",
+       "ease of setup",
+       "weight"
+      ],
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [
+         "4-person capacity with 183 cm standing height",
+         "room divider for privacy",
+         "porch awning for muddy boots",
+         "8-minute setup"
+        ],
+        "cons": [
+         "heavier at 7.4 kg"
+        ],
+        "best_for": "a family of three with gear, wanting room to stand and move"
+       },
+       {
+        "product_id": "AR-1201",
+        "pros": [
+         "very light at 2.1 kg",
+         "freestanding, pitches in about 4 minutes"
+        ],
+        "cons": [
+         "only 2-person capacity, tight for three plus a dog",
+         "no standing height"
+        ],
+        "best_for": "a single backpacker prioritizing low weight"
+       }
+      ],
+      "recommended_product_id": "AR-1202"
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "comparison",
+     "payload": {
+      "title": "4-Person vs 2-Person Basecamp Tent",
+      "entries": [
+       {
+        "product_id": "AR-1202",
+        "pros": [
+         "4-person capacity with 183 cm standing height",
+         "room divider for privacy",
+         "porch awning for muddy boots",
+         "8-minute setup"
+        ],
+        "cons": [
+         "heavier at 7.4 kg"
+        ],
+        "best_for": "a family of three with gear, wanting room to stand and move",
+        "product": {
+         "product_id": "AR-1202",
+         "title": "ACME Basecamp 4-Person Family Tent",
+         "brand": "ACME Basecamp",
+         "price": 219.0,
+         "currency": "USD",
+         "rating": 4.5,
+         "review_count": 1430,
+         "category": "outdoor-camping",
+         "labels": [],
+         "attributes": {
+          "capacity": "4 person",
+          "weight": "7.4 kg",
+          "standing_height": "183 cm",
+          "setup": "8 minutes",
+          "delivery": "Get it by Wed, Sep 30"
+         },
+         "in_stock": true,
+         "short_description": "Standing-height family tent with a room divider and a porch awning for muddy boots.",
+         "options": {},
+         "option_values": {}
+        }
+       },
+       {
+        "product_id": "AR-1201",
+        "pros": [
+         "very light at 2.1 kg",
+         "freestanding, pitches in about 4 minutes"
+        ],
+        "cons": [
+         "only 2-person capacity, tight for three plus a dog",
+         "no standing height"
+        ],
+        "best_for": "a single backpacker prioritizing low weight",
+        "product": {
+         "product_id": "AR-1201",
+         "title": "ACME Basecamp 2-Person Backpacking Tent",
+         "brand": "ACME Basecamp",
+         "price": 149.0,
+         "currency": "USD",
+         "rating": 4.6,
+         "review_count": 812,
+         "category": "outdoor-camping",
+         "labels": [
+          "bestseller"
+         ],
+         "attributes": {
+          "capacity": "2 person",
+          "weight": "2.1 kg",
+          "season": "3-season",
+          "setup": "freestanding",
+          "delivery": "Get it by Tue, Sep 29"
+         },
+         "in_stock": true,
+         "short_description": "A 2.1 kg freestanding three-season tent that pitches in about four minutes.",
+         "options": {},
+         "option_values": {}
+        }
+       }
+      ],
+      "dimensions": [
+       "space",
+       "ease of setup",
+       "weight"
+      ],
+      "recommended_product_id": "AR-1202",
+      "price_delta": {
+       "amount": 70.0,
+       "low_product_id": "AR-1201",
+       "low_price": 149.0,
+       "high_product_id": "AR-1202",
+       "high_price": 219.0
+      }
+     },
+     "stream_id": "toolu_006"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_comparison",
+     "id": "toolu_006",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_007",
+     "input": {
+      "suggestions": [
+       "Add the 4-person tent to my cart",
+       "Show sleeping bags for three",
+       "What else do we need for camping?"
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "suggestions",
+     "payload": {
+      "suggestions": [
+       "Add the 4-person tent to my cart",
+       "Show sleeping bags for three",
+       "What else do we need for camping?"
+      ]
+     },
+     "stream_id": "toolu_007"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_007",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "turn_complete",
+    "data": {
+     "stop_reason": "end_turn",
+     "usage": {
+      "input_tokens": 4,
+      "output_tokens": 526,
+      "cache_read_input_tokens": 26431,
+      "cache_creation_input_tokens": 837
+     },
+     "elapsed_ms": 12237,
+     "results_cleared": 0
+    }
+   }
+  ]
+ },
+ {
+  "message": "The family one sounds right. Add it to my cart, and remind me what returns look like just in case.",
+  "context": "# Session context\n\n<storefront_data>\n{\"customer\": {\"name\": \"Priya\", \"loyalty_tier\": \"ACME Subscription member\", \"location\": \"Maple Heights\", \"preferences\": {\"spending\": \"usually keeps to the mid-range options\", \"home\": \"two-bedroom apartment, no outdoor storage\", \"household\": \"partner and a 6-year-old\", \"pet\": \"golden retriever named Biscuit\", \"style\": \"minimal, neutral colors\"}}, \"saved_memory\": [{\"key\": \"bedding_constraint\", \"value\": \"partner sleeps hot — skip heavy comforters and wool bedding\", \"category\": \"constraint\"}, {\"key\": \"camping_conditions\", \"value\": \"plans to camp in warm weather\", \"category\": \"context\", \"source_session\": \"session-B\"}, {\"key\": \"current_project\", \"value\": \"Camping next month with partner and 6-year-old child, tent budget under $250\", \"category\": \"context\", \"source_session\": \"session-A\"}, {\"key\": \"camping_space_priority\", \"value\": \"prioritizes space size in camping gear\", \"category\": \"preference\", \"source_session\": \"session-A\"}, {\"key\": \"workspace\", \"value\": \"works from home three days a week at a desk set up in the bedroom\", \"category\": \"context\"}, {\"key\": \"camping_experience\", \"value\": \"first-time camper — prefers gear that is simple to set up and forgiving to use\", \"category\": \"context\"}], \"cart\": {\"item_count\": 0, \"subtotal\": 0, \"items\": []}, \"current_page\": {\"page_type\": \"home\", \"extra\": {}}, \"local_time\": \"2026-09-26T20:00\"}\n</storefront_data>",
+  "events": [
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "add_to_cart",
+     "id": "toolu_008",
+     "input": {
+      "product_id": "AR-1202"
+     },
+     "label": "Adding the family tent to your cart"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_policies",
+     "id": "toolu_009",
+     "input": {
+      "query": "return policy tents"
+     },
+     "label": "Checking return policy"
+    }
+   },
+   {
+    "type": "cart_update",
+    "data": {
+     "cart": {
+      "items": [
+       {
+        "product_id": "AR-1202",
+        "title": "ACME Basecamp 4-Person Family Tent",
+        "price": 219.0,
+        "quantity": 1,
+        "image_url": null,
+        "line_total": 219.0
+       }
+      ],
+      "item_count": 1,
+      "subtotal": 219.0,
+      "currency": "USD"
+     }
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "add_to_cart",
+     "id": "toolu_008",
+     "summary": "Added AR-1202 x1. Cart now has 1 item(s), subtotal 219.00 USD.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_policies",
+     "id": "toolu_009",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "<storefront_data>\n[{\"policy_id\": \"returns\", \"title\": \"Returns & refunds\", \"category\": \"returns\", \"content\": \"Most items can be returned within 30 days of delivery in original condition for a full refund to the original payment method. Opened electronics can be returned within 15 days. Mattresses, bedding, and personal-care items must be unopened. Refunds post within 5 business days of the return arriving at our warehouse. ACME Subscription members get free return pickup; otherwise drop off at any ACME location or use the prepaid label in your order page.\"}, {\"policy_id\": \"damaged-items\", \"title\": \"Damaged or missing items\", \"category\": \"returns\", \"content\": \"If an item arrives damaged or an order is missing items, report it within 7 days from the order page with a photo. We will send a replacement or refund the affected items — no need to return the damaged product unless we send a pickup label. Porch theft claims are reviewed case by case after the carrier confirms delivery.\"}, {\"policy_id\": \"guide-tents\", \"title\": \"Buying guide: choosing a tent\", \"category\": \"guide\", \"content\": \"A tent's person rating counts sleepers packed shoulder to shoulder, so for comfort size up by one from"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "The"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " tent's"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " added"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " —"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " c"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "art sub"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "total is $219"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": ".00."
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " As an"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " AC"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ME"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " Subscription"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " member, you"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " get"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " free return p"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ickup within"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " 30 days of"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " delivery for a full refund"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": ","
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": " as long as it's in original cond"
+    }
+   },
+   {
+    "type": "text_delta",
+    "data": {
+     "text": "ition."
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_010",
+     "input": {
+      "suggestions": [
+       "Show sleeping bags for three",
+       "Check out now",
+       "What else do we need for camping?"
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "suggestions",
+     "payload": {
+      "suggestions": [
+       "Show sleeping bags for three",
+       "Check out now",
+       "What else do we need for camping?"
+      ]
+     },
+     "stream_id": "toolu_010"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_010",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "turn_complete",
+    "data": {
+     "stop_reason": "end_turn",
+     "usage": {
+      "input_tokens": 4393,
+      "output_tokens": 359,
+      "cache_read_input_tokens": 9660,
+      "cache_creation_input_tokens": 14900
+     },
+     "elapsed_ms": 11621,
+     "results_cleared": 0
+    }
+   }
+  ]
+ },
+ {
+  "message": "What else should we pack for a first family camping trip?",
+  "context": "# Session context\n\n<storefront_data>\n{\"customer\": {\"name\": \"Priya\", \"loyalty_tier\": \"ACME Subscription member\", \"location\": \"Maple Heights\", \"preferences\": {\"spending\": \"usually keeps to the mid-range options\", \"home\": \"two-bedroom apartment, no outdoor storage\", \"household\": \"partner and a 6-year-old\", \"pet\": \"golden retriever named Biscuit\", \"style\": \"minimal, neutral colors\"}}, \"saved_memory\": [{\"key\": \"bedding_constraint\", \"value\": \"partner sleeps hot — skip heavy comforters and wool bedding\", \"category\": \"constraint\"}, {\"key\": \"camping_conditions\", \"value\": \"plans to camp in warm weather\", \"category\": \"context\", \"source_session\": \"session-B\"}, {\"key\": \"current_project\", \"value\": \"Camping next month with partner and 6-year-old child, tent budget under $250\", \"category\": \"context\", \"source_session\": \"session-A\"}, {\"key\": \"camping_space_priority\", \"value\": \"prioritizes space size in camping gear\", \"category\": \"preference\", \"source_session\": \"session-A\"}, {\"key\": \"workspace\", \"value\": \"works from home three days a week at a desk set up in the bedroom\", \"category\": \"context\"}, {\"key\": \"camping_experience\", \"value\": \"first-time camper — prefers gear that is simple to set up and forgiving to use\", \"category\": \"context\"}], \"cart\": {\"item_count\": 1, \"subtotal\": 219.0, \"items\": [{\"product_id\": \"AR-1202\", \"title\": \"ACME Basecamp 4-Person Family Tent\", \"quantity\": 1}]}, \"current_page\": {\"page_type\": \"home\", \"extra\": {}}, \"local_time\": \"2026-09-26T20:00\"}\n</storefront_data>",
+  "events": [
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "load_skill",
+     "id": "toolu_011",
+     "input": {
+      "skill_name": "planning-goals"
+     },
+     "label": "Building a camping checklist for your trip"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "load_skill",
+     "id": "toolu_011",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "# Planning toward a goal\n\nBelow, \"item\" means whatever this catalog sells: a product, a night, a line, or a seat.\n\nHand back a plan the customer can take in at a glance, change one piece of, and act on when they choose. Settle the steps first, then attach the items to them.\n\n## Frame it\n\n- Five facts shape a plan: the goal, who it involves, where it happens, when it must be ready, and the budget. Take the ones the request and the profile you were given supply. Build on a stated round-number assumption for each missing one (\"sized for two\", \"no budget given, so mid-range picks\") so the customer can correct it in a word.\n- Cut the goal into three to eight steps along the lines the customer will work in (a day, a person, a room, a phase) and label each step in their words.\n- When a budget is stated, split it across the steps in round numbers and show the split, with the larger shares on the steps that carry the goal.\n- Frame and fill in the same turn once the request names the goal: run the searches, propose one step per day, person, or slot with items attached, and let the catalog's gaps and substitutions do a question's work. A choice inside a step (how many of one item, whether a s"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_012",
+     "input": {
+      "query": "family sleeping bags camping"
+     },
+     "label": "Searching sleeping bags"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_013",
+     "input": {
+      "query": "sleeping pads camping air mattress"
+     },
+     "label": "Searching sleeping pads"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_014",
+     "input": {
+      "query": "camp lantern lighting"
+     },
+     "label": "Searching camp lighting"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_015",
+     "input": {
+      "query": "camp stove and cookware"
+     },
+     "label": "Searching cooking gear"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_016",
+     "input": {
+      "query": "camping chairs"
+     },
+     "label": "Searching camp chairs"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_017",
+     "input": {
+      "query": "cooler"
+     },
+     "label": "Searching coolers"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_012",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 3 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"family sleeping bags camping\", \"result_count\": 3, \"results\": [{\"product_id\": \"AR-1203\", \"title\": \"ACME Basecamp 20°F Insulated Sleeping Bag\", \"brand\": \"ACME Basecamp\", \"price\": 89.0, \"currency\": \"USD\", \"rating\": 4.2, \"review_count\": 645, \"in_stock\": true, \"attributes\": {\"rating\": \"-7 C / 20 F\", \"fill\": \"synthetic\", \"weight\": \"1.3 kg\", \"packed\": \"compression sack included\", \"delivery\": \"Get it by Mon, Sep 28\"}, \"short_description\": \"Synthetic 20°F bag that stays warm when damp and packs down small.\"}, {\"product_id\": \"AR-1202\", \"title\": \"ACME Basecamp 4-Person Family Tent\", \"brand\": \"ACME Basecamp\", \"price\": 219.0, \"currency\": \"USD\", \"rating\": 4.5, \"review_count\": 1430, \"in_stock\": true, \"attributes\": {\"capacity\": \"4 person\", \"weight\": \"7.4 kg\", \"standing_height\": \"183 cm\", \"setup\": \"8 minutes\", \"delivery\": \"Get it by Wed, Sep 30\"}, \"short_description\": "
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_013",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 6 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"sleeping pads camping air mattress\", \"result_count\": 6, \"results\": [{\"product_id\": \"AR-1203\", \"title\": \"ACME Basecamp 20°F Insulated Sleeping Bag\", \"brand\": \"ACME Basecamp\", \"price\": 89.0, \"currency\": \"USD\", \"rating\": 4.2, \"review_count\": 645, \"in_stock\": true, \"attributes\": {\"rating\": \"-7 C / 20 F\", \"fill\": \"synthetic\", \"weight\": \"1.3 kg\", \"packed\": \"compression sack included\", \"delivery\": \"Get it by Mon, Sep 28\"}, \"short_description\": \"Synthetic 20°F bag that stays warm when damp and packs down small.\"}, {\"product_id\": \"AR-1201\", \"title\": \"ACME Basecamp 2-Person Backpacking Tent\", \"brand\": \"ACME Basecamp\", \"price\": 149.0, \"currency\": \"USD\", \"rating\": 4.6, \"review_count\": 812, \"in_stock\": true, \"labels\": [\"bestseller\"], \"attributes\": {\"capacity\": \"2 person\", \"weight\": \"2.1 kg\", \"season\": \"3-season\", \"setup\": \"freestanding\", \"delivery\": \"Get it by Tue,"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_014",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 1 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"camp lantern lighting\", \"result_count\": 1, \"results\": [{\"product_id\": \"AR-1204\", \"title\": \"ACME Signature Two-Burner Camp Stove\", \"brand\": \"ACME Signature\", \"price\": 64.5, \"currency\": \"USD\", \"rating\": 4.4, \"review_count\": 233, \"in_stock\": true, \"attributes\": {\"burners\": \"2 x 10000 BTU\", \"fuel\": \"propane\", \"ignition\": \"matchless\", \"wind_panels\": \"yes\", \"delivery\": \"Get it by Tue, Sep 29\"}, \"short_description\": \"Compact two-burner propane stove with matchless ignition and fold-out wind panels.\"}]}\n</storefront_data>"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_015",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 1 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"camp stove and cookware\", \"result_count\": 1, \"results\": [{\"product_id\": \"AR-1204\", \"title\": \"ACME Signature Two-Burner Camp Stove\", \"brand\": \"ACME Signature\", \"price\": 64.5, \"currency\": \"USD\", \"rating\": 4.4, \"review_count\": 233, \"in_stock\": true, \"attributes\": {\"burners\": \"2 x 10000 BTU\", \"fuel\": \"propane\", \"ignition\": \"matchless\", \"wind_panels\": \"yes\", \"delivery\": \"Get it by Tue, Sep 29\"}, \"short_description\": \"Compact two-burner propane stove with matchless ignition and fold-out wind panels.\"}]}\n</storefront_data>"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_016",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 8 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"camping chairs\", \"result_count\": 8, \"results\": [{\"product_id\": \"AR-1201\", \"title\": \"ACME Basecamp 2-Person Backpacking Tent\", \"brand\": \"ACME Basecamp\", \"price\": 149.0, \"currency\": \"USD\", \"rating\": 4.6, \"review_count\": 812, \"in_stock\": true, \"labels\": [\"bestseller\"], \"attributes\": {\"capacity\": \"2 person\", \"weight\": \"2.1 kg\", \"season\": \"3-season\", \"setup\": \"freestanding\", \"delivery\": \"Get it by Tue, Sep 29\"}, \"short_description\": \"A 2.1 kg freestanding three-season tent that pitches in about four minutes.\"}, {\"product_id\": \"AR-1102\", \"title\": \"ACME Studio Mesh Office Chair\", \"brand\": \"ACME Studio\", \"price\": 289.0, \"currency\": \"USD\", \"rating\": 4.5, \"review_count\": 2603, \"in_stock\": true, \"attributes\": {\"lumbar\": \"adjustable\", \"armrests\": \"4D\", \"recline\": \"135 degrees\", \"weight_capacity\": \"300 lb\", \"material\": \"breathable mesh\", \"delivery\": \"Get it by Tue,"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "search_products",
+     "id": "toolu_017",
+     "summary": "ok",
+     "is_error": false,
+     "status": "ok",
+     "excerpt": "Search returned 1 result(s): the catalog's closest text matches, which can include related items rather than the exact thing searched for. Treat a result as the requested item only if its title and attributes match; if none do, the item was not found, and anything you offer instead is named as a stand-in.\n<storefront_data>\n{\"query\": \"cooler\", \"result_count\": 1, \"results\": [{\"product_id\": \"AR-1205\", \"title\": \"ACME Journey 45L Hard Cooler\", \"brand\": \"ACME Journey\", \"price\": 199.0, \"currency\": \"USD\", \"rating\": 4.7, \"review_count\": 1102, \"in_stock\": true, \"labels\": [\"sale\"], \"attributes\": {\"capacity\": \"45 L\", \"ice_retention\": \"5 days\", \"bear_resistant\": \"certified\", \"drain\": \"yes\", \"delivery\": \"Get it by Wed, Sep 30\"}, \"short_description\": \"Keeps ice through a long weekend in summer heat; certified bear-resistant latches.\"}]}\n</storefront_data>"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": []
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": null,
+        "products": []
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": null,
+        "products": []
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "products": [
+         {
+          "product_id": "AR-1206",
+          "title": "ACME Basecamp 400-Lumen Rechargeable Headlamp",
+          "brand": "ACME Basecamp",
+          "price": 34.0,
+          "currency": "USD",
+          "rating": 4.5,
+          "review_count": 2098,
+          "category": "outdoor-camping",
+          "labels": [
+           "bestseller"
+          ],
+          "attributes": {
+           "brightness": "400 lumens",
+           "battery": "USB-C rechargeable",
+           "runtime": "up to 40 h",
+           "red_mode": "yes",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Bright, light, and USB-C rechargeable, with a red mode that won't wake the tent.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "products": [
+         {
+          "product_id": "AR-1206",
+          "title": "ACME Basecamp 400-Lumen Rechargeable Headlamp",
+          "brand": "ACME Basecamp",
+          "price": 34.0,
+          "currency": "USD",
+          "rating": 4.5,
+          "review_count": 2098,
+          "category": "outdoor-camping",
+          "labels": [
+           "bestseller"
+          ],
+          "attributes": {
+           "brightness": "400 lumens",
+           "battery": "USB-C rechargeable",
+           "runtime": "up to 40 h",
+           "red_mode": "yes",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Bright, light, and USB-C rechargeable, with a red mode that won't wake the tent.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Cook",
+        "detail": null,
+        "products": []
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "products": [
+         {
+          "product_id": "AR-1206",
+          "title": "ACME Basecamp 400-Lumen Rechargeable Headlamp",
+          "brand": "ACME Basecamp",
+          "price": 34.0,
+          "currency": "USD",
+          "rating": 4.5,
+          "review_count": 2098,
+          "category": "outdoor-camping",
+          "labels": [
+           "bestseller"
+          ],
+          "attributes": {
+           "brightness": "400 lumens",
+           "battery": "USB-C rechargeable",
+           "runtime": "up to 40 h",
+           "red_mode": "yes",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Bright, light, and USB-C rechargeable, with a red mode that won't wake the tent.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Cook",
+        "detail": "A compact two-burner stove for camp meals, plus a gravity filter for drinking water.",
+        "products": [
+         {
+          "product_id": "AR-1204",
+          "title": "ACME Signature Two-Burner Camp Stove",
+          "brand": "ACME Signature",
+          "price": 64.5,
+          "currency": "USD",
+          "rating": 4.4,
+          "review_count": 233,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "burners": "2 x 10000 BTU",
+           "fuel": "propane",
+           "ignition": "matchless",
+           "wind_panels": "yes",
+           "delivery": "Get it by Tue, Sep 29"
+          },
+          "in_stock": true,
+          "short_description": "Compact two-burner propane stove with matchless ignition and fold-out wind panels.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "products": [
+         {
+          "product_id": "AR-1206",
+          "title": "ACME Basecamp 400-Lumen Rechargeable Headlamp",
+          "brand": "ACME Basecamp",
+          "price": 34.0,
+          "currency": "USD",
+          "rating": 4.5,
+          "review_count": 2098,
+          "category": "outdoor-camping",
+          "labels": [
+           "bestseller"
+          ],
+          "attributes": {
+           "brightness": "400 lumens",
+           "battery": "USB-C rechargeable",
+           "runtime": "up to 40 h",
+           "red_mode": "yes",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Bright, light, and USB-C rechargeable, with a red mode that won't wake the tent.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Cook",
+        "detail": "A compact two-burner stove for camp meals, plus a gravity filter for drinking water.",
+        "products": [
+         {
+          "product_id": "AR-1204",
+          "title": "ACME Signature Two-Burner Camp Stove",
+          "brand": "ACME Signature",
+          "price": 64.5,
+          "currency": "USD",
+          "rating": 4.4,
+          "review_count": 233,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "burners": "2 x 10000 BTU",
+           "fuel": "propane",
+           "ignition": "matchless",
+           "wind_panels": "yes",
+           "delivery": "Get it by Tue, Sep 29"
+          },
+          "in_stock": true,
+          "short_description": "Compact two-burner propane stove with matchless ignition and fold-out wind panels.",
+          "options": {},
+          "option_values": {}
+         },
+         {
+          "product_id": "AR-1208",
+          "title": "ACME Basecamp Gravity Water Filter, 3L",
+          "brand": "ACME Basecamp",
+          "price": 74.0,
+          "currency": "USD",
+          "rating": 4.6,
+          "review_count": 410,
+          "category": "outdoor-camping",
+          "labels": [
+           "eco-friendly"
+          ],
+          "attributes": {
+           "capacity": "3 L",
+           "flow": "1.5 L/min",
+           "filter_life": "1500 L",
+           "weight": "310 g",
+           "delivery": "Get it by Wed, Sep 30"
+          },
+          "in_stock": true,
+          "short_description": "Hang it from a branch and let gravity do the filtering — no pumping, 1.5 liters a minute.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "products": [
+         {
+          "product_id": "AR-1206",
+          "title": "ACME Basecamp 400-Lumen Rechargeable Headlamp",
+          "brand": "ACME Basecamp",
+          "price": 34.0,
+          "currency": "USD",
+          "rating": 4.5,
+          "review_count": 2098,
+          "category": "outdoor-camping",
+          "labels": [
+           "bestseller"
+          ],
+          "attributes": {
+           "brightness": "400 lumens",
+           "battery": "USB-C rechargeable",
+           "runtime": "up to 40 h",
+           "red_mode": "yes",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Bright, light, and USB-C rechargeable, with a red mode that won't wake the tent.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Cook",
+        "detail": "A compact two-burner stove for camp meals, plus a gravity filter for drinking water.",
+        "products": [
+         {
+          "product_id": "AR-1204",
+          "title": "ACME Signature Two-Burner Camp Stove",
+          "brand": "ACME Signature",
+          "price": 64.5,
+          "currency": "USD",
+          "rating": 4.4,
+          "review_count": 233,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "burners": "2 x 10000 BTU",
+           "fuel": "propane",
+           "ignition": "matchless",
+           "wind_panels": "yes",
+           "delivery": "Get it by Tue, Sep 29"
+          },
+          "in_stock": true,
+          "short_description": "Compact two-burner propane stove with matchless ignition and fold-out wind panels.",
+          "options": {},
+          "option_values": {}
+         },
+         {
+          "product_id": "AR-1208",
+          "title": "ACME Basecamp Gravity Water Filter, 3L",
+          "brand": "ACME Basecamp",
+          "price": 74.0,
+          "currency": "USD",
+          "rating": 4.6,
+          "review_count": 410,
+          "category": "outdoor-camping",
+          "labels": [
+           "eco-friendly"
+          ],
+          "attributes": {
+           "capacity": "3 L",
+           "flow": "1.5 L/min",
+           "filter_life": "1500 L",
+           "weight": "310 g",
+           "delivery": "Get it by Wed, Sep 30"
+          },
+          "in_stock": true,
+          "short_description": "Hang it from a branch and let gravity do the filtering — no pumping, 1.5 liters a minute.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Keep food cold",
+        "detail": null,
+        "products": []
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "ui_partial",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "products": [
+         {
+          "product_id": "AR-1206",
+          "title": "ACME Basecamp 400-Lumen Rechargeable Headlamp",
+          "brand": "ACME Basecamp",
+          "price": 34.0,
+          "currency": "USD",
+          "rating": 4.5,
+          "review_count": 2098,
+          "category": "outdoor-camping",
+          "labels": [
+           "bestseller"
+          ],
+          "attributes": {
+           "brightness": "400 lumens",
+           "battery": "USB-C rechargeable",
+           "runtime": "up to 40 h",
+           "red_mode": "yes",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Bright, light, and USB-C rechargeable, with a red mode that won't wake the tent.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Cook",
+        "detail": "A compact two-burner stove for camp meals, plus a gravity filter for drinking water.",
+        "products": [
+         {
+          "product_id": "AR-1204",
+          "title": "ACME Signature Two-Burner Camp Stove",
+          "brand": "ACME Signature",
+          "price": 64.5,
+          "currency": "USD",
+          "rating": 4.4,
+          "review_count": 233,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "burners": "2 x 10000 BTU",
+           "fuel": "propane",
+           "ignition": "matchless",
+           "wind_panels": "yes",
+           "delivery": "Get it by Tue, Sep 29"
+          },
+          "in_stock": true,
+          "short_description": "Compact two-burner propane stove with matchless ignition and fold-out wind panels.",
+          "options": {},
+          "option_values": {}
+         },
+         {
+          "product_id": "AR-1208",
+          "title": "ACME Basecamp Gravity Water Filter, 3L",
+          "brand": "ACME Basecamp",
+          "price": 74.0,
+          "currency": "USD",
+          "rating": 4.6,
+          "review_count": 410,
+          "category": "outdoor-camping",
+          "labels": [
+           "eco-friendly"
+          ],
+          "attributes": {
+           "capacity": "3 L",
+           "flow": "1.5 L/min",
+           "filter_life": "1500 L",
+           "weight": "310 g",
+           "delivery": "Get it by Wed, Sep 30"
+          },
+          "in_stock": true,
+          "short_description": "Hang it from a branch and let gravity do the filtering — no pumping, 1.5 liters a minute.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Keep food cold",
+        "detail": "A hard cooler that holds ice for a long weekend, useful with a dog around too.",
+        "products": [
+         {
+          "product_id": "AR-1205",
+          "title": "ACME Journey 45L Hard Cooler",
+          "brand": "ACME Journey",
+          "price": 199.0,
+          "currency": "USD",
+          "rating": 4.7,
+          "review_count": 1102,
+          "category": "outdoor-camping",
+          "labels": [
+           "sale"
+          ],
+          "attributes": {
+           "capacity": "45 L",
+           "ice_retention": "5 days",
+           "bear_resistant": "certified",
+           "drain": "yes",
+           "delivery": "Get it by Wed, Sep 30"
+          },
+          "in_stock": true,
+          "short_description": "Keeps ice through a long weekend in summer heat; certified bear-resistant latches.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       }
+      ],
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off."
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_plan",
+     "id": "toolu_018",
+     "input": {
+      "title": "First Family Camping Trip Checklist",
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off.",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "product_ids": [
+         "AR-1203"
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "product_ids": [
+         "AR-1206"
+        ]
+       },
+       {
+        "label": "Cook",
+        "detail": "A compact two-burner stove for camp meals, plus a gravity filter for drinking water.",
+        "product_ids": [
+         "AR-1204",
+         "AR-1208"
+        ]
+       },
+       {
+        "label": "Keep food cold",
+        "detail": "A hard cooler that holds ice for a long weekend, useful with a dog around too.",
+        "product_ids": [
+         "AR-1205"
+        ]
+       }
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "plan",
+     "payload": {
+      "title": "First Family Camping Trip Checklist",
+      "intro": "Tent's covered. Here's the rest, sized for three campers (you, your partner, and your 6-year-old) plus warm-weather conditions; the store doesn't carry camp chairs or standalone lanterns, so those are left off.",
+      "steps": [
+       {
+        "label": "Sleep",
+        "detail": "One insulated bag per camper, three total; warm enough for cool nights even in summer.",
+        "products": [
+         {
+          "product_id": "AR-1203",
+          "title": "ACME Basecamp 20°F Insulated Sleeping Bag",
+          "brand": "ACME Basecamp",
+          "price": 89.0,
+          "currency": "USD",
+          "rating": 4.2,
+          "review_count": 645,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "rating": "-7 C / 20 F",
+           "fill": "synthetic",
+           "weight": "1.3 kg",
+           "packed": "compression sack included",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Synthetic 20°F bag that stays warm when damp and packs down small.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Light",
+        "detail": "A rechargeable headlamp per adult, with a red mode that won't wake the tent.",
+        "products": [
+         {
+          "product_id": "AR-1206",
+          "title": "ACME Basecamp 400-Lumen Rechargeable Headlamp",
+          "brand": "ACME Basecamp",
+          "price": 34.0,
+          "currency": "USD",
+          "rating": 4.5,
+          "review_count": 2098,
+          "category": "outdoor-camping",
+          "labels": [
+           "bestseller"
+          ],
+          "attributes": {
+           "brightness": "400 lumens",
+           "battery": "USB-C rechargeable",
+           "runtime": "up to 40 h",
+           "red_mode": "yes",
+           "delivery": "Get it by Mon, Sep 28"
+          },
+          "in_stock": true,
+          "short_description": "Bright, light, and USB-C rechargeable, with a red mode that won't wake the tent.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Cook",
+        "detail": "A compact two-burner stove for camp meals, plus a gravity filter for drinking water.",
+        "products": [
+         {
+          "product_id": "AR-1204",
+          "title": "ACME Signature Two-Burner Camp Stove",
+          "brand": "ACME Signature",
+          "price": 64.5,
+          "currency": "USD",
+          "rating": 4.4,
+          "review_count": 233,
+          "category": "outdoor-camping",
+          "labels": [],
+          "attributes": {
+           "burners": "2 x 10000 BTU",
+           "fuel": "propane",
+           "ignition": "matchless",
+           "wind_panels": "yes",
+           "delivery": "Get it by Tue, Sep 29"
+          },
+          "in_stock": true,
+          "short_description": "Compact two-burner propane stove with matchless ignition and fold-out wind panels.",
+          "options": {},
+          "option_values": {}
+         },
+         {
+          "product_id": "AR-1208",
+          "title": "ACME Basecamp Gravity Water Filter, 3L",
+          "brand": "ACME Basecamp",
+          "price": 74.0,
+          "currency": "USD",
+          "rating": 4.6,
+          "review_count": 410,
+          "category": "outdoor-camping",
+          "labels": [
+           "eco-friendly"
+          ],
+          "attributes": {
+           "capacity": "3 L",
+           "flow": "1.5 L/min",
+           "filter_life": "1500 L",
+           "weight": "310 g",
+           "delivery": "Get it by Wed, Sep 30"
+          },
+          "in_stock": true,
+          "short_description": "Hang it from a branch and let gravity do the filtering — no pumping, 1.5 liters a minute.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       },
+       {
+        "label": "Keep food cold",
+        "detail": "A hard cooler that holds ice for a long weekend, useful with a dog around too.",
+        "products": [
+         {
+          "product_id": "AR-1205",
+          "title": "ACME Journey 45L Hard Cooler",
+          "brand": "ACME Journey",
+          "price": 199.0,
+          "currency": "USD",
+          "rating": 4.7,
+          "review_count": 1102,
+          "category": "outdoor-camping",
+          "labels": [
+           "sale"
+          ],
+          "attributes": {
+           "capacity": "45 L",
+           "ice_retention": "5 days",
+           "bear_resistant": "certified",
+           "drain": "yes",
+           "delivery": "Get it by Wed, Sep 30"
+          },
+          "in_stock": true,
+          "short_description": "Keeps ice through a long weekend in summer heat; certified bear-resistant latches.",
+          "options": {},
+          "option_values": {}
+         }
+        ]
+       }
+      ]
+     },
+     "stream_id": "toolu_018"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_plan",
+     "id": "toolu_018",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "tool_call",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_019",
+     "input": {
+      "suggestions": [
+       "Add all of these to my cart",
+       "Swap the cooler for something smaller",
+       "Check out now"
+      ]
+     }
+    }
+   },
+   {
+    "type": "ui",
+    "data": {
+     "component": "suggestions",
+     "payload": {
+      "suggestions": [
+       "Add all of these to my cart",
+       "Swap the cooler for something smaller",
+       "Check out now"
+      ]
+     },
+     "stream_id": "toolu_019"
+    }
+   },
+   {
+    "type": "tool_result",
+    "data": {
+     "tool": "present_suggestions",
+     "id": "toolu_019",
+     "summary": "Displayed to the customer.",
+     "is_error": false,
+     "status": "ok"
+    }
+   },
+   {
+    "type": "turn_complete",
+    "data": {
+     "stop_reason": "end_turn",
+     "usage": {
+      "input_tokens": 8,
+      "output_tokens": 1294,
+      "cache_read_input_tokens": 56470,
+      "cache_creation_input_tokens": 18855
+     },
+     "elapsed_ms": 25024,
+     "results_cleared": 0
+    }
+   }
+  ]
+ }
+]

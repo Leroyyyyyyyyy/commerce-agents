@@ -133,7 +133,7 @@
 
 ### 104. 真实 trace：动态 context 没变时整段历史都命中缓存；强制工具的那一轮只命中 tools + 静态 prompt
 
-**现象**:2026-09-26 用真实模型跑 `scripts/smoke_chat.py --vertical retail`（3 个 turn，SMOKE PASSED），在 scratchpad 里包一层，把 SSE 事件存成 JSON。orchestrator 每轮的日志（`input` / `cache_read` / `cache_write`）：
+**现象**:2026-09-26 用真实模型跑 `scripts/smoke_chat.py --vertical retail`（3 个 turn，SMOKE PASSED），用 `traces/record_retail.py` 包一层，把 SSE 事件存成 JSON。orchestrator 每轮的日志（`input` / `cache_read` / `cache_write`）：
 - turn 1 round 0：`input=612 read=0 write=9660`。9660 就是 tools + 静态 prompt（①②）；动态 context + 第一条用户消息只有一条消息，不加滚动断点，所以记为未缓存的 612。round 1–4：`input=2`，`read` 从 9660 一路涨到 12558，每轮只写新增的那段。
 - turn 2 round 0：`read=12873 write=139`。12873 = turn 1 最后一轮的 12558 + 315，**整段历史都命中**，只写了新的用户消息。中间跑过一次记忆提取（haiku），context 的字节仍然没变。
 - turn 3 的消息里有 "returns"，`first_forced_tool` 返回 `search_policies`，所以 round 0 是强制调用：`input=3924 read=9660 write=0`。只命中 ①②，前两轮的历史（3924 tokens）按未缓存输入计费，也没有写缓存。round 1 恢复 auto：`read=13374`，正好等于 turn 2 结束时的 13012 + 362。
@@ -141,7 +141,7 @@
 
 **规则**:判断缓存命中要看每一轮（round）的数字，不能只看 turn 的汇总。`turn_complete` 里的 `cache_read` 是整个 turn 各轮的累加（turn 1 是 45344），看不出哪一轮没命中。强制工具的轮次会让整段历史按原价计费一次，代价随历史长度线性增长；下一个 auto 轮能接回之前的缓存。注意：这组数据证明的是「强制轮不加断点的代价」，**不能**证明代码注释里「`tool_choice` 会影响缓存 key」这个理由。要证明那个理由，得在强制轮上也放一个断点，再看能不能命中。
 
-(证据强度:2026-09-26 真实请求实测，模型 `claude-sonnet-5`，trace 存在 session scratchpad 的 `retail_trace.json`；`first_forced_tool` 用探针对三条消息逐一确认)
+(证据强度:2026-09-26 真实请求实测，模型 `claude-sonnet-5`，trace 见 `traces/retail-3turn.json`，每一轮的数字见 `traces/README.md`；`first_forced_tool` 用探针对三条消息逐一确认)
 
 ### 105. 购物车和记忆都会改变动态 context；中转 endpoint 下，连 tools + 静态 prompt 也会随机不命中
 
@@ -153,4 +153,4 @@
 
 **规则**:动态 context 里任何一个字段变了都会让 ③ 失效，不只是购物车；后台记忆写入会在不确定的时间点改变 context。要知道哪个字段变了，就把两个 turn 的 context 解析成字段再比，别靠猜。**缓存行为也取决于请求被发到哪里**：`examples/retail/.env` 用的是第三方中转 endpoint。缓存是按组织/账号隔离的，如果中转把请求分发到多个上游账号，同样的前缀就可能随机不命中。这一条**是推断，还没证实**。验证办法是用官方 endpoint 把同一段对话跑两遍，看 `read=0` 的异常还会不会出现。在这之前，用这套环境测出来的缓存数字，不能当成代码本身的缓存行为。
 
-(证据强度:2026-09-26 真实请求，trace 存在 scratchpad 的 `retail_trace4.json`，里面带每个 turn 的 context；context 按字段 diff 已实测；中转分发的解释是推断)
+(证据强度:2026-09-26 真实请求，trace 见 `traces/retail-4turn.json`，里面带每个 turn 的 context；context 按字段 diff 已实测；中转分发的解释是推断)
