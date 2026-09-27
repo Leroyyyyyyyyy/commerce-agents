@@ -154,3 +154,31 @@
 **规则**:动态 context 里任何一个字段变了都会让 ③ 失效，不只是购物车；后台记忆写入会在不确定的时间点改变 context。要知道哪个字段变了，就把两个 turn 的 context 解析成字段再比，别靠猜。**缓存行为也取决于请求被发到哪里**：`examples/retail/.env` 用的是第三方中转 endpoint。缓存是按组织/账号隔离的，如果中转把请求分发到多个上游账号，同样的前缀就可能随机不命中。这一条**是推断，还没证实**。验证办法是用官方 endpoint 把同一段对话跑两遍，看 `read=0` 的异常还会不会出现。在这之前，用这套环境测出来的缓存数字，不能当成代码本身的缓存行为。
 
 (证据强度:2026-09-26 真实请求，trace 见 `traces/retail-4turn.json`，里面带每个 turn 的 context；context 按字段 diff 已实测；中转分发的解释是推断)
+
+### 106. skill 的索引放在不变的前缀里，正文作为工具结果追加；压缩时正文和普通工具结果一样会被清掉
+
+**现象**:skill 的 `name` 出现在 `load_skill` 的 `skill_name.enum` 里（`tools/registry.py:95`），`name` + `description` 由 `index_block()` 渲染进静态 prompt（`prompt.py:163`）。两者都在初始化时构建一次，`SkillRegistry` 按名字排序，所以字节固定。正文由 `_load_skill` 返回 `ToolOutcome(body)`（`execution.py:245-253`），作为 tool_result 进入 messages。真实 trace（`traces/retail-4turn.json`）：turn 1 加载 `search-discovery`，turn 4 加载 `planning-goals`，加载后的下一轮 `cache_read` 仍然包含 9660，①② 没有失效。`compact_history`（`turn.py:124-150`）在上一次调用的 prompt 达到 100k tokens 时触发，从最旧的 tool_result 开始替换成 `CLEARED_RESULT`，直到历史缩小到一半；它只判断 `type == "tool_result"`，没有为 `load_skill` 做例外。
+
+**规则**:按需加载的内容要放在追加的位置，不能放进前缀：只有索引常驻，并且字节固定；正文作为工具结果追加，只会让前缀变长，不会改动已有的前缀。代价是正文在历史里的地位和普通工具结果一样，压缩时会被清掉；要恢复只能靠 prompt 规则让模型重新加载（`prompt.py:161`「on whichever turn it arrives」）。gate 用到的状态存在 session state 里，不受压缩影响。
+
+(证据强度:读代码 + trace 里的缓存数字。「清掉后模型会重新加载」是推断，没有做超过 100k tokens 的实测)
+
+### 107. 同一次对话里的东西有三种寿命：按 session 存在进程内存、按 session 存在 backend 内存、按用户存在文件
+
+**现象**:2026-09-26 探针：进程 1 通过 `POST /api/session` 拿到 session id，进程 2 重新 import retail app，带着这个 id 请求，得到 `401 {"detail":"Unknown session"}`。原因是 `SessionStore` 把状态文档存在 `_states` dict、把 transcript 存在 `_transcripts` dict（`sessions.py`），都在进程内存里。`seen_products` 是 `ShoppingSessionState` 的字段，属于状态文档，所以一起丢了。购物车在 mock backend 的 `SessionCarts._lines` 里（`storefront_fixtures.py:429`），按 `session_id` 存在内存里，重启后同样没了；而且即使不重启，开一个新 session 也是空购物车。长期记忆不一样：retail 用的是 `JsonFileMemoryStore(data/.memory-store.json)`（`retail/api/main.py:40`），按 `user_id` 存在文件里。文件里的 `current_project` 是 2026-09-21 另一个 session 写的，今天两次运行的 context 里都有它；`camping_conditions` 带着第二次运行的 `source_session_id`。
+
+**规则**:问「重启后还剩什么」要按两个维度分别回答：**键是什么**（session 还是用户）、**存在哪里**（进程内存、backend 还是文件）。对话历史、`seen_products` 和购物车跟着 session 走，并且只在内存里；长期记忆跟着用户走，存在文件里。所以要做持久化，得分别处理两处：`SessionStore` 底部的六个存储方法（`write_state` 的版本检查对应数据库里的 `UPDATE … WHERE version = ?`）和 backend 的购物车，只换一处不够。副作用：记忆会跨运行保留，所以两次 trace 并不独立，第二次运行一开始就带着以前的记忆。
+
+(证据强度:2026-09-26 双进程探针实测 401；记忆文件内容和时间戳实测；读 `sessions.py` 全文、`storefront_fixtures.py:429-441`、`types.py:194-202`、`retail/api/main.py:9-40`)
+
+### 108. `purge_generation` 只防「清空」和提取之间的竞态；单条删除靠快照去重，换个说法就会写回
+
+**现象**:`extract_and_store`（`memory.py:519-536`）调用模型之前读一次 `purge_generation`（521 行），同时读出已有记忆的快照（522 行）；模型返回后再读一次 generation（533 行），变了就什么都不写。只有 `clear` 会让 generation 加一，`delete_fact` 不会。`extract_facts` 用快照去重：同一个 key、同样的值会被丢掉；同一个 key、换了措辞的值会被当作「更新」保留（471-515 行）。提取只读最近一轮对话（`orchestrator.py:284`）。2026-09-27 用假模型客户端（延迟 0.3 秒）加临时 `JsonFileMemoryStore` 实测 5 种情况：
+- 提取期间清空全部，模型原样提出或换个说法：都没有写回。
+- 提取期间删除一条，模型原样提出：**没有写回**，因为快照里还有这条，被当作重复丢掉。
+- 提取期间删除一条，同一个 key、换个说法：**写回了**。
+- 提取开始之前删除一条，模型原样提出：**写回了**，因为快照里已经没有这条。
+
+**规则**:乐观检查（先记版本，做完耗时操作再比一次）只能发现会改变版本号的操作，所以「清空全部」受保护，「删一条」不受保护。单条删除能不能保住，取决于快照去重有没有碰巧命中；删除发生在快照之前，或者模型换了个说法，被删的记忆都会回来，而且不需要并发，删除后的下一轮对话里还提到它就够了。要堵住，得把「用户删过什么」记下来，提取时跳过；检查和写入也要放进同一个事务（`UPDATE … WHERE generation = ?`），才能关掉 533→535 行之间的窗口。
+
+(证据强度:2026-09-27 scratchpad 假客户端探针实测上述 5 个结果；读 `memory.py:88-98, 423-536`、`orchestrator.py:284`。533→535 行之间的窗口没有测。本条替代同日的初版，初版把「删一条且模型原样提出」错判成会写回)

@@ -43,7 +43,8 @@ POST /api/chat
 | orchestrator 循环：prefetch、tool_use 回灌、三个出口 | 93–96 |
 | executor：`seen_products` 白名单、分发表、三层失败、absent 优先 | 97–100 |
 | gates：加购上限按写后总量算 | 101 |
-| prompt caching：三个断点、动态 context 的位置、`tool_choice` 与滚动断点、真实 trace、中转下的异常 | 102–105 |
+| prompt caching：三个断点、动态 context 的位置、`tool_choice` 与滚动断点、真实 trace、中转下的异常、skills | 102–106 |
+| 会话与记忆的寿命；删除记忆与后台提取的竞态 | 107, 108 |
 
 ## 最近一次进度（2026-09-26）
 
@@ -75,8 +76,14 @@ trace 和每一轮的缓存数字在 `traces/` 目录，录制脚本是 `traces/
 
 ## 下一步只做一件事
 
-先弄清楚缓存异常是不是中转造成的（NOTES 105）：用官方 endpoint（或者换一个确定只走单一上游的 key）把同一段 4 个 turn 的对话再跑一遍，看 `read=0` 这类异常还会不会出现。跑法：`traces/record_retail.py ... --fourth-turn`，它会把每个 turn 的 context 一起录下来，拿来按字段比对。
-验收：用户能把 turn 3 / turn 4 的失效分别归到「强制轮」「记忆变了」「购物车变了」「基础设施」四类中的哪一类，并说出依据是哪个数字。
+机制 3 暂时跳过（用户决定）；机制 4、5 已完成（NOTES 102–108）。
+
+进入计划书第 3 步，机制 6：先建最小评测 runner 并保留基线，再做 PostgreSQL 主线。
+- 读 `plugins/commerce-builder/skills/commerce-evals/SKILL.md`。
+- 第一版 10–15 个用例：预算约束、没见过的商品 ID、超出数量上限、注入攻击等。检查最终的购物车状态和 UI 数据，不检查模型怎么措辞。
+- 验收：用当前代码跑出一份基线报告，每个用例跑多次，记录通过率和波动。
+
+机制 1 的验收三问（[Turn 3 全链路](https://claude.ai/artifact/883w6AsL9RTLorZh8SY4wE)，私有链接）用户还没有自己答过。
 
 ## 环境与陷阱
 
