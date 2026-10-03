@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney, optionValuesLabel, priceLabel, useStoreFrame } from "web-shared";
-import { fetchProduct } from "@/lib/api";
+import { fetchProduct, type ProductAdd } from "@/lib/api";
 import type { PriceIntelligence, Product, ProductDetails, ProductsPayload, ReviewAspects } from "@/lib/types";
 import ProductTile, { AddButton, DeliveryPromise, OptionLine, ProductImage, Rating } from "../ProductTile";
 
@@ -132,7 +132,7 @@ function ProductDetail({
 }: {
   product: Product;
   reason?: string | null;
-  onAdd?: (product: Product) => boolean | void | Promise<boolean | void>;
+  onAdd?: ProductAdd;
   onClose: () => void;
 }) {
   const [details, setDetails] = useState<ProductDetails | null>(null);
@@ -237,7 +237,7 @@ export default function ProductCarousel({
   partial,
 }: {
   payload: ProductsPayload;
-  onAdd?: (product: Product) => boolean | void | Promise<boolean | void>;
+  onAdd?: ProductAdd;
   partial?: boolean;
 }) {
   const layout = payload.layout ?? "carousel";

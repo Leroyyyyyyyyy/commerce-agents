@@ -32,7 +32,14 @@ from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 
 from commerce_common.memory import MemoryStore, MemoryWriteRejected
-from shopping_agent import PageContext, ProductDetails, ShoppingSessionContext, ShoppingSessionState
+from commerce_common.streaming import ToolOutcome
+from shopping_agent import (
+    PageContext,
+    Product,
+    ProductDetails,
+    ShoppingSessionContext,
+    ShoppingSessionState,
+)
 from shopping_agent.fencing import STOREFRONT_FENCE
 from shopping_agent.gates import OPTIONS_GATE, PROVENANCE_GATE
 from shopping_agent.serialization import cart_payload as serialize_cart
@@ -50,6 +57,22 @@ _HELD_ADD_TEXT = {
     PROVENANCE_GATE: "Product not in this session's results",
     OPTIONS_GATE: "Choose the product's options with the assistant before adding it",
 }
+
+
+def direct_add_error(execution: ToolOutcome) -> str | None:
+    """Translate a held or failed cart write for the add button."""
+    if not execution.blocked and not execution.is_error:
+        return None
+    detail = _HELD_ADD_TEXT.get(execution.blocked or "", execution.result_text)
+    return detail.split(". ")[0] + "."
+
+
+def add_button_note(product: Product, quantity: int, template: str) -> str:
+    return template.format(
+        title=STOREFRONT_FENCE.sanitize_text(product.title, max_chars=120),
+        product_id=product.product_id,
+        quantity=quantity,
+    )
 
 
 class StartSessionRequest(BaseModel):
@@ -142,22 +165,13 @@ class StorefrontHost:
         execution = await executor.execute(
             "add_to_cart", {"product_id": request.product_id, "quantity": request.quantity}
         )
-        if execution.blocked or execution.is_error:
-            # The result text is written for the model; the button gets its first sentence,
-            # or the gate's short reason.
-            detail = _HELD_ADD_TEXT.get(execution.blocked or "", execution.result_text)
-            raise HTTPException(status_code=400, detail=detail.split(". ")[0] + ".")
+        if detail := direct_add_error(execution):
+            raise HTTPException(status_code=400, detail=detail)
         product = record.state.seen_products.get(request.product_id)
         if product is None:
             raise HTTPException(status_code=400, detail="Product not in this session's results")
         # The title is catalog-authored and the note enters model context unfenced.
-        record.pending_app_events.append(
-            note.format(
-                title=STOREFRONT_FENCE.sanitize_text(product.title, max_chars=120),
-                product_id=product.product_id,
-                quantity=request.quantity,
-            )
-        )
+        record.pending_app_events.append(add_button_note(product, request.quantity, note))
         cart = next((e.data.get("cart") for e in execution.events if e.type == "cart_update"), None)
         return {"ok": True, "cart": cart, **self._cart_extras(record)}
 

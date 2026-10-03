@@ -14,7 +14,7 @@ paths each, four vertical examples, and a Claude Code plugin.
 - `*/runtime-agent-sdk/`: each agent as `ClaudeAgentOptions`, with a console.
 - `*/managed-agents/`: the manifest directory (with the derived `system.md`) and the role's MCP server.
 - `examples/demo_common/` and `examples/web-shared/`: what the verticals' APIs and web apps share; `examples/` is the npm workspace. `demo_common/postgres.py` supplies the optional pool and atomic session store, with `migrations/001_sessions.sql`.
-- `examples/<vertical>/`: `api/`, `data/`, `storefront-web/`, `merchant-web/`; ports 8000-8003, 3000-3003, 3100-3103. Retail `api/postgres_retail.py` and `migrations/002_carts.sql` add transactionally capped carts; `COMMERCE_DATABASE_URL` selects SQL shopping storage.
+- `examples/<vertical>/`: `api/`, `data/`, `storefront-web/`, `merchant-web/`; ports 8000-8003, 3000-3003, 3100-3103. Retail `api/postgres_retail.py` and `migrations/002_carts.sql` add transactionally capped carts; `api/cart_add.py` defines direct-add operation IDs and `migrations/003_cart_add_operations.sql` stores replay results. `COMMERCE_DATABASE_URL` selects SQL shopping storage.
 - `plugins/commerce-builder/`: six skills, four commands; `.claude-plugin/marketplace.json` points at it.
 - `docs/`: `safety.md`, `backends.md`, `deployment.md`, `postgres.md` (optional retail persistence). `scripts/`: install, demo, smoke, screenshots, check, deploy, verify.
 - `tests/`: the suites that span packages (both roles on all three paths); each package keeps its own `tests/`.

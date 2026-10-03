@@ -39,6 +39,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MIGRATIONS = [
     ROOT / "examples/demo_common/migrations/001_sessions.sql",
     ROOT / "examples/retail/api/migrations/002_carts.sql",
+    ROOT / "examples/retail/api/migrations/003_cart_add_operations.sql",
 ]
 
 
@@ -315,7 +316,7 @@ async def test_cancelling_thread_wait_does_not_cancel_its_database_write(
     assert (await backend.get_cart(context(record))).item_count == 1
 
 
-async def test_replayed_add_is_not_yet_idempotent(store, backend):
+async def test_agent_add_without_operation_identity_is_still_not_idempotent(store, backend):
     record = store.start("demo-user")
     await backend.add_to_cart(context(record), "AR-1202", 1)
     await backend.add_to_cart(context(record), "AR-1202", 1)

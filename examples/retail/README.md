@@ -28,7 +28,7 @@ uvicorn retail.api.main:app --app-dir examples --reload --port 8000
 定义。启动时执行迁移，关闭时释放连接池。未设置该变量时保持内存模式。
 
 运行方式、事务边界及验证命令见 [`docs/postgres.md`](../../docs/postgres.md)。
-此模式持久化购物会话及购物车、在数据库事务内限制数量；尚不保证重试幂等或恢复中断轮次。
+此模式持久化购物会话及购物车、在数据库事务内限制数量，并保证直加接口的请求幂等；不恢复中断的 Agent 轮次。
 商品目录、商家状态和文件记忆保持原有实现。
 
 ## 试用
@@ -64,6 +64,8 @@ uvicorn retail.api.main:app --app-dir examples --reload --port 8000
 - `api/mock_merchant.py`：`MockRetailMerchant`，即基于同一商品目录实现的 `MerchantBackend`；已应用的变更会写回其中，`execute_analysis_query` 则通过同一状态的只读 SQLite 视图为分析委托智能体提供数据。
 - `api/agent_config.py`：两个智能体的配置。分析功能默认开启；设置 `MERCHANT_ANALYSIS_CODE_EXECUTION=1` 会添加托管沙箱，`MERCHANT_ANALYSIS_MODEL` 可以覆盖委托智能体使用的模型。
 - `api/main.py`：商城前台基于文件的记忆存储（`data/.memory-store.json`）、商品详情扩充逻辑，以及“加入购物车”按钮的路由。
+- `api/cart_add.py`：`POST /api/cart/add` 要求 `operation_id`（UUID）、`product_id` 和可选的 `quantity`（默认 1）。同次重试复用 ID，新操作用新 ID；相同 ID 换参数返回 409。SQL 的 `api/migrations/003_cart_add_operations.sql` 账本与购物车及按钮 note 同事务提交；内存模式只在当前进程缓存结果。前端保留失败且结果未知的按钮操作 ID，成功或明确拒绝后才生成下一个 ID；刷新页面不保留待重试操作。
+- `storefront-web/lib/api.test.cjs`：运行 `npm test --workspace=acme-retail-storefront-web` 验证按钮请求 ID 和失败分类。
 - `api/merchant.py`：概览页面中的 KPI 趋势和洞察卡片。
 - `storefront-web/`、`merchant-web/`：此示例的卡片、视图和设计令牌，构建于 `../web-shared/` 之上。
 

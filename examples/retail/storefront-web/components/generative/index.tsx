@@ -4,13 +4,13 @@
 /** One entry per shopping presentation tool. */
 
 import { type GenerativeBlockProps, UnknownBlock } from "web-shared";
+import type { ProductAdd } from "@/lib/api";
 import type {
   CheckoutPayload,
   ComparisonPayload,
   GuidePayload,
   OrderStatusPayload,
   PlanPayload,
-  Product,
   ProductsPayload,
 } from "@/lib/types";
 import CheckoutSummary from "./CheckoutSummary";
@@ -25,7 +25,7 @@ export default function GenerativeBlock({
   status,
   onAdd,
 }: GenerativeBlockProps & {
-  onAdd?: (product: Product) => boolean | void | Promise<boolean | void>;
+  onAdd?: ProductAdd;
 }) {
   const partial = status !== "final";
   switch (block.component) {

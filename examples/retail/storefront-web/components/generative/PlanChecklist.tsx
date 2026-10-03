@@ -4,7 +4,8 @@
 "use client";
 
 import { formatMoney } from "web-shared";
-import type { PlanPayload, Product } from "@/lib/types";
+import type { PlanPayload } from "@/lib/types";
+import type { ProductAdd } from "@/lib/api";
 import ProductTile, { ProductRow } from "../ProductTile";
 
 const SEGMENT_CLASSES = ["bg-sky-400", "bg-emerald-400", "bg-violet-400", "bg-amber-400", "bg-rose-400"];
@@ -53,7 +54,7 @@ export default function PlanChecklist({
   partial,
 }: {
   payload: PlanPayload;
-  onAdd?: (product: Product) => boolean | void | Promise<boolean | void>;
+  onAdd?: ProductAdd;
   partial?: boolean;
 }) {
   const steps = payload.steps ?? [];

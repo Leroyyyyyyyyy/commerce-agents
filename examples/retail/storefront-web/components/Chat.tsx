@@ -38,8 +38,9 @@ export default function Chat({ chat, home, onCartUpdate }: { chat: AgentTurn; ho
         <GenerativeBlock
           block={segment.block}
           status={segment.status}
-          onAdd={async (product) => {
-            const cart = await addToCart(product.product_id);
+          onAdd={async (product, intent) => {
+            const { cart, retryable } = await addToCart(product.product_id, 1, intent.operationId);
+            intent.retryable = retryable;
             if (cart) onCartUpdate(cart);
             return cart !== null;
           }}

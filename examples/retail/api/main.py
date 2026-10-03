@@ -21,7 +21,6 @@ from fastapi.staticfiles import StaticFiles
 from commerce_common.memory import InMemoryMemoryStore, JsonFileMemoryStore
 from demo_common import (
     REPO_ROOT,
-    CartAddRequest,
     MemorySeeder,
     build_storefront_host,
     load_demo_env,
@@ -30,6 +29,7 @@ from shopping_agent import ProductDetails, ShoppingSessionState
 from shopping_agent_runtime import ShoppingAgent
 
 from .agent_config import build_shopping_config
+from .cart_add import RetailCartAddRequest, RetailCartAdds
 from .merchant import create_merchant_router
 from .mock_retail import DATA_DIR, MockRetail
 
@@ -57,6 +57,7 @@ if database_url := os.environ.get("COMMERCE_DATABASE_URL"):
             [
                 REPO_ROOT / "examples/demo_common/migrations/001_sessions.sql",
                 Path(__file__).parent / "migrations/002_carts.sql",
+                Path(__file__).parent / "migrations/003_cart_add_operations.sql",
             ],
         )
 
@@ -103,10 +104,9 @@ app.include_router(create_merchant_router(backend, InMemoryMemoryStore()), prefi
 app.mount("/products", StaticFiles(directory=PRODUCT_IMAGES, check_dir=False), name="products")
 
 
+cart_adds = RetailCartAdds(host)
+
+
 @app.post("/api/cart/add")
-async def cart_add(request: CartAddRequest, record: host.CurrentSession) -> dict:
-    return await host.direct_add(
-        record,
-        request,
-        note="Customer tapped the add-to-cart button on {title} ({product_id}), quantity {quantity}.",
-    )
+async def cart_add(request: RetailCartAddRequest, record: host.CurrentSession) -> dict:
+    return await cart_adds.add(record, request)

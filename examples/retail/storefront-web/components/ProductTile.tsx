@@ -3,9 +3,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { hasOptions, optionSummary, optionValuesLabel, priceLabel, useStoreFrame } from "web-shared";
 import type { Product } from "@/lib/types";
+import { api, type CartAddIntent, type ProductAdd } from "@/lib/api";
 import { flyToCart } from "@/lib/flight";
 import { attributeChips, productGlyph, productTileClass } from "@/lib/format";
 import { STORE_POLICY } from "@/lib/storePolicy";
@@ -102,18 +103,20 @@ export function OptionLine({ product, className = "" }: { product: Product; clas
 }
 
 /**
- * An onAdd that resolves `false` means the server rejected the write. A product with options
- * is not added from the card: the button hands the choice to the assistant, which settles the
- * option with the customer and adds the variant.
+ * A false onAdd means there was no usable confirmation, not necessarily no write.
+ * The callback marks whether this intent is retryable. Products with options are
+ * handed to the assistant, which settles the choice and adds the variant.
  */
 export function AddButton({
   product,
   onAdd,
 }: {
   product: Product;
-  onAdd: (product: Product) => boolean | void | Promise<boolean | void>;
+  onAdd: ProductAdd;
 }) {
   const [phase, setPhase] = useState<"idle" | "busy" | "done" | "error">("idle");
+  // This button owns an intent; another button with the same product owns another.
+  const pendingAdd = useRef<CartAddIntent | null>(null);
   const { ask } = useStoreFrame();
   if (hasOptions(product)) {
     return (
@@ -138,7 +141,12 @@ export function AddButton({
         if (phase !== "idle") return;
         const source = event.currentTarget.parentElement ?? event.currentTarget;
         setPhase("busy");
-        const added = (await onAdd(product)) !== false;
+        if (!pendingAdd.current || pendingAdd.current.session !== api.session || pendingAdd.current.productId !== product.product_id) {
+          pendingAdd.current = { session: api.session, productId: product.product_id, operationId: crypto.randomUUID(), retryable: true };
+        }
+        const intent = pendingAdd.current;
+        const added = (await onAdd(product, intent)) !== false;
+        if (added || !intent.retryable) pendingAdd.current = null;
         setPhase(added ? "done" : "error");
         // Animate only after the server confirmed the write.
         if (added) flyToCart(product, source);
@@ -167,7 +175,7 @@ export default function ProductTile({
   /** Fills its grid cell instead of the carousel's fixed width. */
   fluid?: boolean;
   selected?: boolean;
-  onAdd?: (product: Product) => boolean | void | Promise<boolean | void>;
+  onAdd?: ProductAdd;
   onOpen?: (product: Product) => void;
 }) {
   const clickable = Boolean(onOpen);
@@ -242,7 +250,7 @@ export function ProductRow({
   onAdd,
 }: {
   product: Product;
-  onAdd?: (product: Product) => boolean | void | Promise<boolean | void>;
+  onAdd?: ProductAdd;
 }) {
   return (
     <div className="flex w-full items-center gap-3 rounded-xl border border-(--line) bg-(--card) p-2 shadow-(--shadow-sm) transition-shadow hover:shadow-md">

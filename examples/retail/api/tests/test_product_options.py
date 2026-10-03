@@ -3,6 +3,8 @@
 
 """Products with options over HTTP: listings, the detail route, and the add button."""
 
+from uuid import uuid4
+
 import pytest
 
 from demo_common.tests.fixtures import session_record
@@ -15,7 +17,7 @@ def add(client, shopper):
 
     def _add(product_id: str, *seen: str):
         headers = shopper(*seen)
-        body = {"product_id": product_id, "quantity": 1}
+        body = {"product_id": product_id, "quantity": 1, "operation_id": str(uuid4())}
         return client.post("/api/cart/add", json=body, headers=headers), session_record(
             main, headers
         )
@@ -51,6 +53,23 @@ def test_the_add_button_on_a_family_is_held_with_the_route_to_a_variant(add):
     assert response.status_code == 400
     assert "options" in response.json()["detail"]
     assert record.pending_app_events == []
+
+
+def test_button_retries_reuse_id_but_new_adds_do_not(client, shopper):
+    headers = shopper("AR-1202")
+    body = {"product_id": "AR-1202", "quantity": 1, "operation_id": str(uuid4())}
+    first = client.post("/api/cart/add", json=body, headers=headers)
+    assert first.status_code == 200
+    replay = client.post("/api/cart/add", json=body, headers=headers)
+    assert replay.status_code == 200 and replay.json() == first.json()
+    conflict = client.post("/api/cart/add", json=body | {"quantity": 2}, headers=headers)
+    assert conflict.status_code == 409
+    assert client.get("/api/cart", headers=headers).json()["item_count"] == 1
+    body["operation_id"] = str(uuid4())
+    assert (
+        client.post("/api/cart/add", json=body, headers=headers).json()["cart"]["item_count"] == 2
+    )
+    assert len(session_record(main, headers).pending_app_events) == 2
 
 
 def test_the_add_button_on_a_seen_variant_writes_a_line_with_its_choice(add):
