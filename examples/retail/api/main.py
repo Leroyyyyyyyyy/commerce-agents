@@ -12,6 +12,10 @@ user, so what a shopper asks the store to remember, or to forget, survives a res
 
 from __future__ import annotations
 
+import asyncio
+import os
+from pathlib import Path
+
 from fastapi.staticfiles import StaticFiles
 
 from commerce_common.memory import InMemoryMemoryStore, JsonFileMemoryStore
@@ -22,7 +26,7 @@ from demo_common import (
     build_storefront_host,
     load_demo_env,
 )
-from shopping_agent import ProductDetails
+from shopping_agent import ProductDetails, ShoppingSessionState
 from shopping_agent_runtime import ShoppingAgent
 
 from .agent_config import build_shopping_config
@@ -32,11 +36,42 @@ from .mock_retail import DATA_DIR, MockRetail
 load_demo_env(DATA_DIR.parent)
 PRODUCT_IMAGES = DATA_DIR.parent / "storefront-web" / "public" / "products"
 
-backend = MockRetail()
+shopping_config = build_shopping_config()
+sessions = None
+startup = []
+shutdown = []
+if database_url := os.environ.get("COMMERCE_DATABASE_URL"):
+    # Optional imports: the in-memory demo needs no PostgreSQL dependencies or server.
+    from demo_common.postgres import PostgresDatabase, PostgresSessionStore
+
+    from .postgres_retail import PostgresRetail
+
+    database = PostgresDatabase(database_url)
+    backend = PostgresRetail(database, config=shopping_config)
+    sessions = PostgresSessionStore(ShoppingSessionState, database)
+
+    async def start_database() -> None:
+        await asyncio.to_thread(database.open)
+        await asyncio.to_thread(
+            database.migrate,
+            [
+                REPO_ROOT / "examples/demo_common/migrations/001_sessions.sql",
+                Path(__file__).parent / "migrations/002_carts.sql",
+            ],
+        )
+
+    async def close_database() -> None:
+        await asyncio.to_thread(database.close)
+
+    startup.append(start_database)
+    shutdown.append(close_database)
+else:
+    backend = MockRetail()
+
 agent = ShoppingAgent(
     backend=backend,
     skills_dir=REPO_ROOT / "shopping-agent" / "skills",
-    config=build_shopping_config(),
+    config=shopping_config,
     memory_store=JsonFileMemoryStore(DATA_DIR / ".memory-store.json"),
 )
 
@@ -58,6 +93,9 @@ host = build_storefront_host(
         DATA_DIR / "memory-seed.json", marker=DATA_DIR / ".memory-seeded.json"
     ),
     product_detail=product_detail,
+    sessions=sessions,
+    on_startup=startup,
+    on_shutdown=shutdown,
 )
 app = host.app
 app.include_router(create_merchant_router(backend, InMemoryMemoryStore()), prefix="/api/merchant")

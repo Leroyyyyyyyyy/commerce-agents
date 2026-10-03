@@ -107,6 +107,14 @@ class Cart(BaseModel):
         return round(sum(item.line_total for item in self.items), 2)
 
 
+class CartAddition(BaseModel):
+    """An atomic backend add, including the actual increment after concurrent caps."""
+
+    cart: Cart
+    quantity_added: int = Field(ge=0)
+    refused: Literal["full", "limit"] | None = None
+
+
 class UserPreferences(BaseModel):
     """Supplied by the backend before every turn; nothing the model does writes to it."""
 

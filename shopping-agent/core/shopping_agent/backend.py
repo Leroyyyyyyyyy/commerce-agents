@@ -14,6 +14,7 @@ from typing import Any
 
 from .types import (
     Cart,
+    CartAddition,
     CheckoutHandoff,
     Disclosure,
     FulfillmentOption,
@@ -98,6 +99,21 @@ class StorefrontBackend(ABC):
         product without ``options`` or a variant, never a family record; the executor
         holds an add of a family and points the model at its variants. The line's
         ``option_values`` come from the variant."""
+
+    async def try_atomic_add_to_cart(
+        self,
+        session: ShoppingSessionContext,
+        product_id: str,
+        quantity: int,
+        *,
+        max_quantity: int,
+        max_lines: int,
+    ) -> CartAddition | None:
+        """Optional shared-store write: enforce caps and report the actual increment in
+        one transaction. Return None without writing when this capability is absent;
+        the gate then uses its process-local read/check/write fallback. Provenance and
+        options remain gate responsibilities. Limits come from deployment config."""
+        return None
 
     @abstractmethod
     async def update_cart_item(

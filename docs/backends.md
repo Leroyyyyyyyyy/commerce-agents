@@ -39,8 +39,10 @@ submit; hold seats, then confirm. The backend enforces that order.
 3. Map that class in an executor subclass (`domain_error`) so the tool result names the
    missing step instead of reading as a system failure. The model then tells the customer
    what comes first.
-4. For a write your platform deduplicates, derive an idempotency key from the session id
-   and a hash of the cart lines.
+4. For a write your platform deduplicates, carry a stable host-controlled ID for that
+   user operation. Retries reuse it; distinct operations use different IDs even when
+   their parameters match. Where the receipt and effect share a database, commit them
+   together.
 5. When the customer completes a step outside the conversation (a payment page, a
    verification code), have the host queue an app event on the session; the next turn reads
    it.

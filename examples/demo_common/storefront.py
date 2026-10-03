@@ -29,6 +29,7 @@ from typing import Any, cast
 from fastapi import Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from starlette.concurrency import run_in_threadpool
 
 from commerce_common.memory import MemoryStore, MemoryWriteRejected
 from shopping_agent import PageContext, ProductDetails, ShoppingSessionContext, ShoppingSessionState
@@ -85,12 +86,14 @@ class StorefrontHost:
         env_hint: str,
         cart_extras: Callable[[StorefrontRecord], dict[str, Any]] | None,
         on_startup: Sequence[Callable[[], Awaitable[None]]] = (),
+        on_shutdown: Sequence[Callable[[], Awaitable[None]]] = (),
+        sessions: SessionStore[ShoppingSessionState] | None = None,
     ) -> None:
-        self.app = build_app(title, on_startup)
+        self.app = build_app(title, on_startup, on_shutdown)
         self.backend = backend
         self.agent = agent
         self.memory_store = cast(MemoryStore, agent.memory.store)
-        self.sessions: SessionStore[ShoppingSessionState] = SessionStore(ShoppingSessionState)
+        self.sessions = sessions if sessions is not None else SessionStore(ShoppingSessionState)
         # The parameter annotation a vertical's own routes use: ``record: host.CurrentSession``.
         self.CurrentSession = session_dependency(self.sessions, "/api/session")
         self._env_hint = env_hint
@@ -170,6 +173,9 @@ def build_storefront_host(
     product_detail: Callable[[ProductDetails], dict[str, Any]] | None = None,
     cart_extras: Callable[[StorefrontRecord], dict[str, Any]] | None = None,
     before_turn: Callable[[], None] | None = None,
+    sessions: SessionStore[ShoppingSessionState] | None = None,
+    on_startup: Sequence[Callable[[], Awaitable[None]]] = (),
+    on_shutdown: Sequence[Callable[[], Awaitable[None]]] = (),
 ) -> StorefrontHost:
     """Seed memory, then build the app with the shared routes. ``product_of`` and
     ``product_detail`` let a vertical stamp live state onto catalog reads or enrich the
@@ -182,7 +188,12 @@ def build_storefront_host(
         env_hint=f"examples/{example_root.name}/.env",
         cart_extras=cart_extras,
         # Seed the memory fixtures when the app starts, inside its event loop.
-        on_startup=[lambda: memory_seeder.seed_at_boot(cast(MemoryStore, agent.memory.store))],
+        on_startup=[
+            *on_startup,
+            lambda: memory_seeder.seed_at_boot(cast(MemoryStore, agent.memory.store)),
+        ],
+        on_shutdown=on_shutdown,
+        sessions=sessions,
     )
     app = host.app
     read_product = product_of or backend.product
@@ -191,7 +202,9 @@ def build_storefront_host(
 
     @app.post("/api/session")
     async def start_session(request: StartSessionRequest | None = None) -> dict:
-        record = host.sessions.start((request or StartSessionRequest()).user_id)
+        record = await run_in_threadpool(
+            host.sessions.start, (request or StartSessionRequest()).user_id
+        )
         profile = await backend.get_preferences(host.context(record))
         return {
             "session_id": record.session_id,
@@ -260,9 +273,9 @@ def build_storefront_host(
             await host.memory_store.clear(record.user_id)
             if request.clear_memory and not request.purge_memory:
                 await memory_seeder.reseed(host.memory_store, record.user_id)
-        host.sessions.reset(record)
-        backend.reset_session(record.session_id)
-        fresh = host.sessions.start(record.user_id)
+        await run_in_threadpool(host.sessions.reset, record)
+        await run_in_threadpool(backend.reset_session, record.session_id)
+        fresh = await run_in_threadpool(host.sessions.start, record.user_id)
         return {"ok": True, "session_id": fresh.session_id}
 
     @app.get("/api/health")

@@ -34,6 +34,9 @@ examples/*/data/.memory-*.json
 shopping-agent/managed-agents/storefront-mcp-server/.storefront_memory.json
 merchant-agent/managed-agents/merchant-mcp-server/.merchant_memory.json
 
+# Local behavioral eval reports include raw model output.
+evals/retail/reports/
+
 # OS / editor / local tooling
 .DS_Store
 .idea/

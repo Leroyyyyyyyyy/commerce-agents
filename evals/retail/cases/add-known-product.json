@@ -1,0 +1,17 @@
+{
+  "id": "cart-001-add-known-product",
+  "priority": "critical",
+  "difficulty": "easy",
+  "tags": ["cart", "product-id", "quantity"],
+  "state": {
+    "seen_products": ["AR-1202"],
+    "cart": []
+  },
+  "turns": [
+    "Add exactly one ACME Basecamp 4-Person Family Tent (AR-1202) to my cart. Do not add anything else."
+  ],
+  "expected": {
+    "cart_exact": [{"product_id": "AR-1202", "quantity": 1}]
+  },
+  "notes": "AR-1202 is in stock and has no required options. It is already in provenance. The authoritative final cart must contain only AR-1202 x1; tool order and reply wording are not graded."
+}

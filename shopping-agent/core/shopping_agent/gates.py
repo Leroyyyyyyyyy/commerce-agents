@@ -112,17 +112,36 @@ async def gated_add_to_cart(
         return held
     requested = max(1, quantity)
     max_quantity = config.max_quantity_per_item
-    async with _cart_lock(session):
-        current = await backend.get_cart(session)
-        existing = next((i for i in current.items if i.product_id == product_id), None)
-        if existing is None and len(current.items) >= config.max_cart_lines:
+    atomic = None
+    atomic_add = getattr(backend, "try_atomic_add_to_cart", None)
+    if atomic_add is not None:
+        atomic = await atomic_add(
+            session,
+            product_id,
+            requested,
+            max_quantity=max_quantity,
+            max_lines=config.max_cart_lines,
+        )
+    if atomic is not None:
+        if atomic.refused == "full":
             return ToolOutcome.error("The cart is full.")
-        allowed = min(requested, max(0, max_quantity - (existing.quantity if existing else 0)))
-        if allowed <= 0:
+        if atomic.refused == "limit":
             return ToolOutcome.error(
                 f"This item is already at the per-item limit of {max_quantity}."
             )
-        cart = await backend.add_to_cart(session, product_id, allowed)
+        allowed, cart = atomic.quantity_added, atomic.cart
+    else:
+        async with _cart_lock(session):
+            current = await backend.get_cart(session)
+            existing = next((i for i in current.items if i.product_id == product_id), None)
+            if existing is None and len(current.items) >= config.max_cart_lines:
+                return ToolOutcome.error("The cart is full.")
+            allowed = min(requested, max(0, max_quantity - (existing.quantity if existing else 0)))
+            if allowed <= 0:
+                return ToolOutcome.error(
+                    f"This item is already at the per-item limit of {max_quantity}."
+                )
+            cart = await backend.add_to_cart(session, product_id, allowed)
     # The confirmation names the id only: titles are catalog text and stay inside fences.
     capped = f" (capped at the per-item limit of {max_quantity})" if allowed < requested else ""
     return _written(

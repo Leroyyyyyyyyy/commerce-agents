@@ -11,6 +11,7 @@ from .config import ShoppingAgentConfig
 from .serialization import cart_payload, compact_product, search_result_text
 from .types import (
     Cart,
+    CartAddition,
     CartItem,
     CheckoutHandoff,
     Disclosure,
@@ -31,6 +32,7 @@ from .types import (
 
 __all__ = [
     "Cart",
+    "CartAddition",
     "CheckoutHandoff",
     "CartItem",
     "Disclosure",

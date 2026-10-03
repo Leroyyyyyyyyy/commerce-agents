@@ -27,7 +27,7 @@ from commerce_common.streaming import AgentEvent, to_sse
 from commerce_common.turn import session_tag
 from shopping_agent import Cart, Order, ProductDetails, ShoppingSessionContext
 
-from .sessions import SessionConflictError, SessionRecord, SessionStore
+from .sessions import SessionConflictError, SessionRecord, SessionStore, UnknownSessionError
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,10 @@ def spawn_background(coro: Coroutine[Any, Any, object]) -> None:
     task.add_done_callback(_background_tasks.discard)
 
 
-def _lifespan(on_startup: Sequence[Callable[[], Awaitable[None]]]):
+def _lifespan(
+    on_startup: Sequence[Callable[[], Awaitable[None]]],
+    on_shutdown: Sequence[Callable[[], Awaitable[None]]],
+):
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
@@ -94,14 +97,22 @@ def _lifespan(on_startup: Sequence[Callable[[], Awaitable[None]]]):
                 "to its own credential chain. If chat returns auth errors, set "
                 "ANTHROPIC_API_KEY in a .env file (repo root or the example's directory)."
             )
-        for step in on_startup:
-            await step()
-        yield
+        try:
+            for step in on_startup:
+                await step()
+            yield
+        finally:
+            for step in reversed(on_shutdown):
+                await step()
 
     return lifespan
 
 
-def build_app(title: str, on_startup: Sequence[Callable[[], Awaitable[None]]] = ()) -> FastAPI:
+def build_app(
+    title: str,
+    on_startup: Sequence[Callable[[], Awaitable[None]]] = (),
+    on_shutdown: Sequence[Callable[[], Awaitable[None]]] = (),
+) -> FastAPI:
     """A FastAPI app that answers only to loopback host names (plus ``DEMO_ALLOWED_HOSTS``,
     for a deployment that puts its own authentication in front) and to any localhost
     origin. Rejecting other Host headers stops DNS-rebinding, which CORS does not. Logs go
@@ -116,7 +127,7 @@ def build_app(title: str, on_startup: Sequence[Callable[[], Awaitable[None]]] = 
         host.strip().rsplit(":", 1)[0] if ":" in host.strip() else host.strip()
         for host in os.environ.get("DEMO_ALLOWED_HOSTS", "").split(",")
     ]
-    app = FastAPI(title=title, version="0.1.0", lifespan=_lifespan(on_startup))
+    app = FastAPI(title=title, version="0.1.0", lifespan=_lifespan(on_startup, on_shutdown))
     app.add_middleware(
         TrustedHostMiddleware,
         allowed_hosts=["localhost", "127.0.0.1", *(host for host in extra_hosts if host)],
@@ -152,6 +163,33 @@ def append_user_turn(record: SessionRecord[Any], message: str, events_label: str
             "content": [{"type": "text", "text": note}, {"type": "text", "text": message}],
         }
     )
+
+
+def _save_streamed_turn(sessions: SessionStore[Any], record: SessionRecord[Any]) -> None:
+    for _ in range(3):
+        try:
+            sessions.save(record)
+            return
+        except SessionConflictError:
+            try:
+                current = sessions.require(record.session_id)
+            except UnknownSessionError:
+                logger.warning("session %s ended during its turn", session_tag(record.session_id))
+                return
+            # Only a pending-note-only write can be safely rebased. Another turn or
+            # state mutation must not be silently overwritten by this transcript.
+            if current.messages != record.messages[
+                : record.stored_messages
+            ] or current.state.model_dump(mode="json") != record.stored_state.get("state"):
+                logger.error(
+                    "session %s: turn conflict is not mergeable", session_tag(record.session_id)
+                )
+                return
+            # Include notes already merged on an earlier attempt without duplicating
+            # them. New notes are the current store's authoritative queue.
+            record.pending_app_events = list(current.pending_app_events)
+            record.version = current.version
+    logger.error("session %s: turn save kept conflicting", session_tag(record.session_id))
 
 
 def stream_turn(
@@ -201,21 +239,9 @@ def stream_turn(
         else:
             spawn_background(agent.update_memory(record.messages, session))
 
-    def write_back() -> None:
-        try:
-            sessions.save(record)
-        except SessionConflictError:
-            # A button's request wrote the session while the turn streamed. The turn is the
-            # larger write, so it goes in over that version; the note the button queued is lost.
-            record.version = (sessions.read_state(record.session_id) or (0, {}))[0]
-            logger.warning(
-                "session %s: a write raced the turn; the turn wins", session_tag(record.session_id)
-            )
-            sessions.save(record)
-
     return StreamingResponse(
         event_stream(),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-        background=BackgroundTask(write_back),
+        background=BackgroundTask(_save_streamed_turn, sessions, record),
     )

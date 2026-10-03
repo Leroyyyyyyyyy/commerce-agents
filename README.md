@@ -28,6 +28,10 @@ python scripts/run_demo.py retail     # API :8000 + storefront :3000
 verticals are `retail` (:3000, portal :3100), `travel` (:3001, :3101), `telecom` (:3002,
 :3102), and `entertainment` (:3003, :3103); each README lists prompts to try on both surfaces.
 
+The retail Messages API app supports optional [PostgreSQL sessions and carts](docs/postgres.md).
+`COMMERCE_DATABASE_URL` selects shared, transactionally capped storage; the default remains
+in memory. This mode does not yet deduplicate retried writes or resume interrupted turns.
+
 ## Quick start: build your own
 
 The Claude Code plugin scaffolds an agent on these packages against your systems, or reviews
@@ -74,8 +78,9 @@ its analytics, catalog, inventory, pricing, and campaign systems.
 | [`merchant-agent/managed-agents/`](merchant-agent/managed-agents/) | Manifest, merchant MCP server, scheduled digest for Managed Agents | — |
 | [`examples/`](examples/) | Four verticals, shared host code (`demo_common/`), shared web code (`web-shared/`) | — |
 | [`plugins/commerce-builder/`](plugins/commerce-builder/) | The Claude Code plugin | — |
-| [`docs/`](docs/) | `safety.md` (enforced rules), `backends.md` (mapping your systems), `deployment.md` (other platforms) | — |
+| [`docs/`](docs/) | `safety.md` (enforced rules), `backends.md` (mapping your systems), `deployment.md` (other platforms), `postgres.md` (retail persistence) | — |
 | [`tests/`](tests/) | Cross-package suites; each package also has its own `tests/` | — |
+| [`evals/retail/`](evals/retail/) | Retail cart behavior cases; `scripts/eval_retail.py` runs isolated Messages API trials | — |
 | [`scripts/`](scripts/) | `install.sh`, `run_demo.py`, `smoke_chat.py`, `screenshot_tour.py`, `check.py`, `deploy_managed_agent.sh`, `verify_all.py` | — |
 
 ## Three ways to run an agent

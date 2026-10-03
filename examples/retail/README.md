@@ -20,6 +20,17 @@ uvicorn retail.api.main:app --app-dir examples --reload --port 8000
 
 聊天功能需要在仓库根目录的 `.env` 或环境变量中设置 `ANTHROPIC_API_KEY`；浏览商品目录和商家门户组件不需要该密钥。设置 `MERCHANT_REQUIRE_HOST_APPROVAL=0` 后，可以通过聊天中的批准来应用变更；默认情况下，需要点击预览卡片上的按钮来应用变更。
 
+### 可选 PostgreSQL 会话和购物车
+
+安装 `requirements-postgres.txt` 并设置 `COMMERCE_DATABASE_URL` 后，Messages API 使用
+`demo_common/postgres.py` 的会话存储和 `api/postgres_retail.py` 的购物车后端。
+`api/migrations/002_carts.sql` 定义购物车；共享会话表由 `demo_common/migrations/001_sessions.sql`
+定义。启动时执行迁移，关闭时释放连接池。未设置该变量时保持内存模式。
+
+运行方式、事务边界及验证命令见 [`docs/postgres.md`](../../docs/postgres.md)。
+此模式持久化购物会话及购物车、在数据库事务内限制数量；尚不保证重试幂等或恢复中断轮次。
+商品目录、商家状态和文件记忆保持原有实现。
+
 ## 试用
 
 商城前台（`scripts/smoke_chat.py --vertical retail` 会运行对应的三轮对话）：
