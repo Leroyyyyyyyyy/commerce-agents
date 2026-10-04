@@ -118,6 +118,10 @@ trace 和每一轮的缓存数字在 `traces/` 目录，录制脚本是 `traces/
 - 真实运行要用 `env -u ANTHROPIC_BASE_URL .venv/bin/python scripts/eval_retail.py`,否则进程里的官方 URL 盖掉 `examples/retail/.env` 的中转地址。输出经 `tee` 时退出码被吞，看汇总行。
 - 预测题「哪些 case 最可能非 3/3」:用户要求直接给答案，已讲解(笔记 131):行为上全 3/3,但 006/007/010(2 次)/008(1 次)的通过有代码兜底。用户尚未独立复述。
 
+## CI 修复
+
+`3b6384f`、`64a35dc`、`97ed629` 三次 CI 都在 pytest 收集阶段失败(本地用 `python -m pytest` 掩盖了问题)，见 NOTES 132。已修 `pytest.ini`(pythonpath 加仓库根)和 `tests/test_retail_cart_idempotency.py`(导入共享 fixture 前先 importorskip 驱动)。模拟 CI 的验证方式：控制台 `.venv/bin/pytest -q`,同时用桩模块屏蔽 psycopg。以后推送后要检查 `gh run list`。
+
 ## 下一步只做一件事
 
 机制 6 已新增 `scripts/eval_retail.py`、`evals/retail/cases/add-known-product.json` 和使用说明 `evals/retail/README.md`。首个 case：已见 AR-1202、空购物车，只加 AR-1202 x1。`score_cart` 直接检查 backend 购物车的精确 ID/数量、无额外商品；不锁死工具顺序。

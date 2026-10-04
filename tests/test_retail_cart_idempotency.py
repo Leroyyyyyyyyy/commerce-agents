@@ -9,7 +9,13 @@ from fastapi.testclient import TestClient
 from commerce_common.testing import FakeClient
 from demo_common import MemorySeeder, build_storefront_host
 from shopping_agent_runtime import ShoppingAgent
-from tests import test_postgres_retail as pg_tests
+
+# test_postgres_retail skips at module level without the driver, which can leave a
+# partial module behind; skip here first rather than reading fixtures from it.
+pytest.importorskip("psycopg")
+pytest.importorskip("psycopg_pool")
+
+from tests import test_postgres_retail as pg_tests  # noqa: E402
 
 # Reuse the isolated real-database fixtures, without importing their test functions.
 database = pg_tests.database

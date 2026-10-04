@@ -372,3 +372,11 @@
 **规则**:终态通过率衡量的是「模型 + 代码护栏」整个系统，不是模型。要知道模型本身的倾向，得统计轨迹里「被 gate/backend 拦下的写尝试」。限量这类由代码保证的结果，单测已经覆盖，放进模型 eval 主要是回归检查接线；eval 的预算应该花在代码兜不住的地方：缺货后加替代品、规格查到变体后自己挑一个、注入商品已进 provenance。小样本下同一 prompt 在两个 case 里表现差异(0/3 vs 2/3)本身就是波动证据，不能把单个 case 的 3/3 当稳定结论。
 
 (证据强度:真实报告工具轨迹；未加大 trials 验证比例)
+
+### 132. 本地 `python -m pytest` 全绿、CI 的 `pytest` 却在收集阶段报错：两边的 sys.path 和依赖不同
+
+**现象**:从 `3b6384f` 起 GitHub CI 连续 3 次失败，本地一直显示 1142 passed。CI 报两个收集错误:①`from scripts.eval_retail import ...` → `No module named 'scripts'`;②`tests.test_postgres_retail has no attribute 'database'`。本地复现：改用控制台命令 `.venv/bin/pytest` 立刻出现 ①;再用一个抛 `ModuleNotFoundError(name="psycopg")` 的桩模块屏蔽驱动，两个错误和 CI 逐字一致。原因:`python -m` 会把当前目录放进 sys.path,而 `--import-mode=importlib` 下控制台 `pytest` 不会;CI 只装 `requirements-dev.txt`,没有 psycopg,`test_postgres_retail` 在模块级 skip,留下一个执行到一半的模块，另一个测试文件从里面取 fixture 时就取不到。修复:`pytest.ini` 的 `pythonpath` 加上仓库根;幂等测试在导入共享 fixture 前先 `importorskip` 驱动。修复后，模拟 CI 的运行结果是 1142 passed、3 skipped。
+
+**规则**:「本地全绿」只在本地的启动方式和依赖集合下成立。验证命令要和 CI 一样(同一个入口、同一份 requirements),可选依赖要在「没装」的状态下也跑一遍。一个测试模块依赖另一个模块的模块级副作用(fixture、skip)，就把两边的跳过条件绑在了一起，要在使用方显式重复同样的守卫。推送之后要看 CI 状态，不要拿本地结果当作交付证据。
+
+(证据强度:CI 日志 + 本地桩模块逐字复现 + 三种运行方式回归)
