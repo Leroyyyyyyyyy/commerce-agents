@@ -1,0 +1,26 @@
+{
+  "id": "cart-002-search-then-add",
+  "priority": "critical",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "provenance",
+    "search"
+  ],
+  "state": {
+    "seen_products": [],
+    "cart": []
+  },
+  "turns": [
+    "Add the ACME Fit Speed Rope to my cart."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1306",
+        "quantity": 1
+      }
+    ]
+  },
+  "notes": "Nothing is in provenance. Search for 'speed rope' returns only AR-1306, which is in stock without options. The agent must resolve the product before adding it; the cart must hold only AR-1306 x1."
+}

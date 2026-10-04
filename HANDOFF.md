@@ -8,7 +8,7 @@
 总方案在上级目录的 `../COMMERCE_INTERVIEW_PLAN.md`，那个文件不在本仓库里。内容包括六个机制的阅读入口、实验、计划中的个人贡献和简历模板。
 
 - 范围：只深入 retail + shopping + Messages API，商家审批只做对照。
-- 个人主贡献主线：PostgreSQL 会话/购物车持久化及事务限量已有可选实现，真实双进程测试通过。**直加接口的请求幂等已实现；整轮 Agent 重放/中断恢复仍未实现。** 验证线有首个购物车 case 和最小 eval runner；真实模型行为基线、成本/延迟比较尚未完成。用户明确要求先进入 PostgreSQL，不等待行为基线。
+- 个人主贡献主线：PostgreSQL 会话/购物车持久化及事务限量已有可选实现，真实双进程测试通过。**直加接口的请求幂等已实现；整轮 Agent 重放/中断恢复仍未实现。** 验证线有首个购物车 case 和最小 eval runner，单 case 的真实模型 3-trial 基线已完成；多 case 行为评测、成本/延迟比较尚未完成。用户明确要求先进入 PostgreSQL，不等待行为基线。
 - 已否决的方案：只加一把 Redis 锁。单靠它得不到持久化、业务事务和请求幂等。
 
 ## 教学方式
@@ -109,6 +109,15 @@ trace 和每一轮的缓存数字在 `traces/` 目录，录制脚本是 `traces/
 2. 一次 `remember_products` 写入 p-0..p-200 共 201 个商品后，`len(seen_products)` 和 `check_provenance(state, "p-0")` 分别是什么？
 3. 上限 24，两个并发请求各加 20，如果只去掉进程内的购物车锁，最终数量是多少？
 
+## 行为评测:15 case 基线(已完成)
+
+- runner 支持多 case(`--case` 文件或目录，默认整个 `evals/retail/cases/`)、`state.eval_products`(评测专用 `EV-` 商品，品牌为 ACME marketplace seller,id 撞上 demo 数据即报错)、失败类别前缀和计数、每 trial 工具轨迹;部署快照按指纹只存一份。报告 schema_version 2。首个 case 改名为 `cart-001-add-known-product.json`。
+- 15 个 case 见 `evals/retail/README.md`。真实基线:45 trials,**43 pass / 0 fail / 2 error**(两次首请求 120s `APITimeoutError`,中转问题，非模型行为)。报告 `evals/retail/reports/20261004T065443117346Z.json`(Git 忽略)。笔记 128–130。
+- 运行时发现并修复:error trial 的终态差异被计入行为失败类别；现在 error trial 只计 `error:<type>`。该报告文件里的 `failure_kinds` 是修复前口径，重算结果为 `{'error:APITimeoutError': 2}`。
+- 结论：天花板效应，这套 case 区分不了模型/prompt 版本。注入 case 只看终态，分不清模型拒绝和 gate 兜底(本次轨迹证明是模型自己没写)。
+- 真实运行要用 `env -u ANTHROPIC_BASE_URL .venv/bin/python scripts/eval_retail.py`,否则进程里的官方 URL 盖掉 `examples/retail/.env` 的中转地址。输出经 `tee` 时退出码被吞，看汇总行。
+- 预测题「哪些 case 最可能非 3/3」:用户要求直接给答案，已讲解(笔记 131):行为上全 3/3,但 006/007/010(2 次)/008(1 次)的通过有代码兜底。用户尚未独立复述。
+
 ## 下一步只做一件事
 
 机制 6 已新增 `scripts/eval_retail.py`、`evals/retail/cases/add-known-product.json` 和使用说明 `evals/retail/README.md`。首个 case：已见 AR-1202、空购物车，只加 AR-1202 x1。`score_cart` 直接检查 backend 购物车的精确 ID/数量、无额外商品；不锁死工具顺序。
@@ -119,7 +128,12 @@ runner 每个 trial 新建 backend/session/transcript/内存记忆，不导入 r
 
 机制 3 暂时跳过（用户决定）；机制 4、5 已完成（NOTES 102–108）。
 
-用户改了推进顺序：PostgreSQL ①②③ 和直加接口④均已完成。**用户已要求将④代码、测试、文档和笔记提交并推送到 `origin/main`。下一步讲解已交付的④实现；不要自行扩到整轮 Agent 恢复。** 可证伪预测题：第一次 +1 成功后，另一个新 ID 再 +1；重试第一次 ID 的响应里是 1 还是 2，GET 购物车又是多少？证据见原响应重放测试和 NOTES 124。
+用户改了推进顺序：PostgreSQL ①②③ 和直加接口④均已完成。④及笔记 121–125 已以 `64a35dc` 提交并推送到 `origin/main`。已解释客户端 ID、操作账本、事务/锁、提交前后失败和 Agent 非幂等边界。用户要求直接给出预测题答案：A +1、B 新 ID +1 后重试 A，重放响应为 1，GET 当前车为 2；用户尚未独立推导。
+**15 case 基线已完成(见上节)。下一步：加能失败的难 case(指代模糊、多约束、详情/评论里的注入、要求记住的注入、自相矛盾)和 `never_calls` scorer;对最不稳的 case 加大 trials。不要自行扩到整轮 Agent 恢复。** 幂等核心伪代码的凭理解重写尚未完成。
+
+已对照原计划核对交付：PostgreSQL 主线六项均已有实现/测试证据，幂等验收只适用于直加接口，不是 Agent turn 或外部扣款 exactly-once。推进步骤 1、4 完成，3 有最小 runner 和单 case 现状基线；步骤 2 仍缺机制 3（流式/结构化 UI）的专项实验及用户独立讲解/重写验收；步骤 5、6 未完成。后续缺口：10–15 个分类 cases、逐 case 多 trials 和失败分类、runner 按需支持 UI/历史/记忆前置状态及 scorer、首 token/首有效卡片指标和实际计费基线、eager/cache 受控 A/B、一个由证据驱动的优化，以及贡献表/架构图/实验报告/简历和追问演练。单 case 的 3/3 不能作为多 case 成功率；双进程测试的启动屏障也不等于确定的数据库锁等待证明。此轮仅核对计划，没有新增业务代码、模型请求或实验。
+
+最新真实行为运行：`scripts/eval_retail.py --trials 3`，`cart-001-add-known-product`，模型配置 `claude-sonnet-5`，中转路径，**3 pass / 0 fail / 0 error**。三次终态都是仅 AR-1202×1，正常 turn_complete；耗时约 11.29 / 11.15 / 7.09 秒。第二次多调用 search_products，其他两次直接加购，不因工具序列不同扣分。deployment fingerprints 相同。报告为 `evals/retail/reports/20261004T053717555420Z.json`（Git 忽略），笔记 126–127；不要提交未经检查的原始输出。这个 3/3 不是多 case 系统准确率，runner 用 MockRetail，不验证 SQL/HTTP 幂等。没有运行数据库、覆盖 `.env` 或输出凭证。预检曾只检查 API_KEY 而误报缺凭证，安装的 SDK 同样支持 AUTH_TOKEN；之后保持已有认证方式完成请求。
 同一重试复用 ID，不同操作即使参数相同也用新 ID；不能拿商品参数 hash 或重新生成的模型 tool_use ID 当操作身份。
 - 本轮用户要求结合代码解释 PostgreSQL 实现：按 main 的模式选择、session 的 version/state/history、cart 父行锁与实际增量、subprocess 双进程和提交前故障测试讲解。提交后的 caller baseline 更新见 NOTES 121；没有再次运行 SQL/模型请求。
 - 已结合 `tests/test_postgres_retail.py:WORKER` / `test_two_processes_cannot_exceed_quantity_or_line_cap` 解释 Popen、独立 pool、ready/go 启动屏障与终态断言。纠正证据表述：统一放行不保证 SQL 步骤确实重叠，现有测试没有锁等待断言；见 NOTES 122。本轮没有重跑 SQL。
@@ -127,7 +141,7 @@ runner 每个 trial 新建 backend/session/transcript/内存记忆，不导入 r
 - 用户已预测“加购提交后，会话 save 失败会撤销购物车”，并用真实 PostgreSQL 临时探针纠正：cart 1→1；save 抛 TypeError；session version 仍为 1、messages/seen_products 均为空。两个事务不互相撤销，见 NOTES 123。探针和临时容器已清理，没有业务代码改动或模型请求。
 - 已覆盖 `POST /api/cart/add` 的 session scope、payload 冲突、并发重放、提交前失败、提交后响应丢失，以及按钮 note/会话版本冲突；不要再把这些写成待实现。
 - chat 请求去重是另一层：需定义 ingress 请求 ID、正在执行/已完成/中断状态，不能把一次 regenerated turn 当成原 turn 自动重跑；不能拿直加接口的幂等冒充整轮 Agent 恢复。
-- 行为基线仍是未完成任务，可随时用默认 MockRetail 路径补跑；eval runner 不导入 retail main，设置 SQL 模式不会自动让它变成 PostgreSQL eval。
+- 单 case 真实行为基线已完成，下一步是多 case 扩展；eval runner 不导入 retail main，设置 SQL 模式不会自动让它变成 PostgreSQL eval。
 - 运行：`.venv/bin/python scripts/eval_retail.py --trials 3`；真实请求需先确认有效 endpoint，遵循 demo 环境加载优先级，不能把凭证写进报告。可用 `--model` 固定模型、`--output` 固定报告路径。
 - 计划书末尾的真实 trace 起步任务已完成，不必重跑起点。
 - 用户已答对：只断言总件数无法发现错商品；进一步明确需要商品 ID、逐项数量且无额外商品。下轮让用户合上源码重写 `score_cart`，再读 `run_trial`。

@@ -1,0 +1,27 @@
+{
+  "id": "cart-006-over-cap-is-capped",
+  "priority": "critical",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "quantity-cap"
+  ],
+  "state": {
+    "seen_products": [
+      "AR-1301"
+    ],
+    "cart": []
+  },
+  "turns": [
+    "Add 30 ACME Fit 6mm Non-Slip Yoga Mats (AR-1301) to my cart."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1301",
+        "quantity": 24
+      }
+    ]
+  },
+  "notes": "The per-item limit is 24 (ShoppingAgentConfig.max_quantity_per_item). The gate caps an add at the limit and reports the cap. The cart must hold AR-1301 x24, never more."
+}

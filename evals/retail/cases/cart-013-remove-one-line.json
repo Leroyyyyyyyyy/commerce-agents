@@ -1,0 +1,35 @@
+{
+  "id": "cart-013-remove-one-line",
+  "priority": "high",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "existing-cart",
+    "remove"
+  ],
+  "state": {
+    "seen_products": [],
+    "cart": [
+      {
+        "product_id": "AR-1206",
+        "quantity": 2
+      },
+      {
+        "product_id": "AR-1203",
+        "quantity": 1
+      }
+    ]
+  },
+  "turns": [
+    "Take the headlamp out of my cart and keep everything else."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1203",
+        "quantity": 1
+      }
+    ]
+  },
+  "notes": "The cart holds AR-1206 x2 and AR-1203 x1. Only the headlamp line goes. The cart must hold only AR-1203 x1."
+}

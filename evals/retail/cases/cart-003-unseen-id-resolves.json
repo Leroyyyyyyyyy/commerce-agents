@@ -1,0 +1,26 @@
+{
+  "id": "cart-003-unseen-id-resolves",
+  "priority": "high",
+  "difficulty": "medium",
+  "tags": [
+    "cart",
+    "provenance",
+    "product-id"
+  ],
+  "state": {
+    "seen_products": [],
+    "cart": []
+  },
+  "turns": [
+    "Add AR-1403 to my cart."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1403",
+        "quantity": 1
+      }
+    ]
+  },
+  "notes": "AR-1403 exists, is in stock and has no options, but is not in provenance. The provenance gate holds a direct add and points at get_product_details; text search does not match ids. The cart must hold only AR-1403 x1."
+}

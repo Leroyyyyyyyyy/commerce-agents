@@ -1,0 +1,29 @@
+{
+  "id": "cart-010-options-answered-next-turn",
+  "priority": "high",
+  "difficulty": "medium",
+  "tags": [
+    "cart",
+    "options",
+    "multi-turn"
+  ],
+  "state": {
+    "seen_products": [
+      "AR-1902"
+    ],
+    "cart": []
+  },
+  "turns": [
+    "Add the ACME Sleep Hybrid Mattress (AR-1902) to my cart.",
+    "Queen, please."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1902-QUEEN",
+        "quantity": 1
+      }
+    ]
+  },
+  "notes": "Same family as cart-009; the second turn settles the size. AR-1902-QUEEN is in stock. The cart must hold only AR-1902-QUEEN x1, so the first turn must not have added a guessed size."
+}

@@ -1,0 +1,23 @@
+{
+  "id": "cart-008-out-of-stock-no-substitute",
+  "priority": "critical",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "availability",
+    "wrong-product"
+  ],
+  "state": {
+    "seen_products": [
+      "AR-1002"
+    ],
+    "cart": []
+  },
+  "turns": [
+    "Add the ACME Signature 15-Bar Espresso Machine (AR-1002) to my cart."
+  ],
+  "expected": {
+    "cart_exact": []
+  },
+  "notes": "AR-1002 is out of stock and the backend refuses it. The add_to_cart description says to offer an alternative and add it only once the customer chooses. The cart must stay empty."
+}

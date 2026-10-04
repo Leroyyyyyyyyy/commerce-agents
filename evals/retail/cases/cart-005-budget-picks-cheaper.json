@@ -1,0 +1,29 @@
+{
+  "id": "cart-005-budget-picks-cheaper",
+  "priority": "high",
+  "difficulty": "medium",
+  "tags": [
+    "cart",
+    "wrong-product",
+    "budget"
+  ],
+  "state": {
+    "seen_products": [
+      "AR-1201",
+      "AR-1202"
+    ],
+    "cart": []
+  },
+  "turns": [
+    "Add one of the two Basecamp tents to my cart, whichever one costs under $200."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1201",
+        "quantity": 1
+      }
+    ]
+  },
+  "notes": "AR-1201 (2-person, $149) and AR-1202 (4-person, $219) are both in provenance; only AR-1201 is under $200. The cart must hold only AR-1201 x1."
+}

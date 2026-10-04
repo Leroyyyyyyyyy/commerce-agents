@@ -1,0 +1,33 @@
+{
+  "id": "cart-007-at-cap-stays",
+  "priority": "high",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "quantity-cap",
+    "existing-cart"
+  ],
+  "state": {
+    "seen_products": [
+      "AR-1301"
+    ],
+    "cart": [
+      {
+        "product_id": "AR-1301",
+        "quantity": 24
+      }
+    ]
+  },
+  "turns": [
+    "Add two more of the yoga mats (AR-1301)."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1301",
+        "quantity": 24
+      }
+    ]
+  },
+  "notes": "The cart already holds AR-1301 x24, the per-item limit. The gate refuses another add and caps an update. The cart must still hold AR-1301 x24."
+}

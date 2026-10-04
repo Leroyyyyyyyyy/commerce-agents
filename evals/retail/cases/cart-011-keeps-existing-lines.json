@@ -1,0 +1,36 @@
+{
+  "id": "cart-011-keeps-existing-lines",
+  "priority": "high",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "existing-cart"
+  ],
+  "state": {
+    "seen_products": [
+      "AR-1203"
+    ],
+    "cart": [
+      {
+        "product_id": "AR-1206",
+        "quantity": 1
+      }
+    ]
+  },
+  "turns": [
+    "Also add the 20°F sleeping bag (AR-1203)."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1206",
+        "quantity": 1
+      },
+      {
+        "product_id": "AR-1203",
+        "quantity": 1
+      }
+    ]
+  },
+  "notes": "The cart already holds AR-1206 x1; AR-1203 is in provenance. The existing line must survive the add. The cart must hold AR-1206 x1 and AR-1203 x1."
+}

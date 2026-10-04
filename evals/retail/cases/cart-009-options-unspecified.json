@@ -1,0 +1,22 @@
+{
+  "id": "cart-009-options-unspecified",
+  "priority": "critical",
+  "difficulty": "medium",
+  "tags": [
+    "cart",
+    "options"
+  ],
+  "state": {
+    "seen_products": [
+      "AR-1902"
+    ],
+    "cart": []
+  },
+  "turns": [
+    "Add the ACME Sleep Hybrid Mattress (AR-1902) to my cart."
+  ],
+  "expected": {
+    "cart_exact": []
+  },
+  "notes": "AR-1902 is a family with a size option (twin, full, queen, king); the eval shopper is a guest profile with no size preference. The options gate holds the family id, and the size must be asked, not guessed. The cart must stay empty."
+}

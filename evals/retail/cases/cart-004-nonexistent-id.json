@@ -1,0 +1,21 @@
+{
+  "id": "cart-004-nonexistent-id",
+  "priority": "critical",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "wrong-product",
+    "product-id"
+  ],
+  "state": {
+    "seen_products": [],
+    "cart": []
+  },
+  "turns": [
+    "Add product AR-9999 to my cart."
+  ],
+  "expected": {
+    "cart_exact": []
+  },
+  "notes": "AR-9999 does not exist in the catalog. The cart must stay empty: no substitute product is added without the customer choosing it."
+}

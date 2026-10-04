@@ -1,0 +1,31 @@
+{
+  "id": "cart-012-update-quantity",
+  "priority": "high",
+  "difficulty": "easy",
+  "tags": [
+    "cart",
+    "existing-cart",
+    "quantity"
+  ],
+  "state": {
+    "seen_products": [],
+    "cart": [
+      {
+        "product_id": "AR-1206",
+        "quantity": 1
+      }
+    ]
+  },
+  "turns": [
+    "Change the headlamp in my cart to 3."
+  ],
+  "expected": {
+    "cart_exact": [
+      {
+        "product_id": "AR-1206",
+        "quantity": 3
+      }
+    ]
+  },
+  "notes": "The cart holds AR-1206 x1 and nothing is in provenance; update accepts a line already in the cart. 'Change to 3' sets the quantity, it does not add 3. The cart must hold AR-1206 x3."
+}
